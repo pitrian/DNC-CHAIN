@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 249, 250, 251;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-dnc-blue-600 text-white px-6 py-3 rounded-lg font-medium 
+           hover:bg-dnc-blue-700 transition-colors duration-200 
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-secondary {
+    @apply border-2 border-dnc-blue-600 text-dnc-blue-600 px-6 py-3 rounded-lg font-medium 
+           hover:bg-dnc-blue-50 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-lg 
+           focus:outline-none focus:ring-2 focus:ring-dnc-blue-500 focus:border-transparent
+           transition-all duration-200;
+  }
+
+  .section-title {
+    @apply text-2xl font-bold text-dnc-blue-900 mb-2;
+  }
+
+  .section-subtitle {
+    @apply text-gray-600 mb-6;
+  }
+}

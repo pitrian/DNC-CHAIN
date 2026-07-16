@@ -1,0 +1,4 @@
+# Auto-generated files
+data/
+.env
+config/genesis.json
