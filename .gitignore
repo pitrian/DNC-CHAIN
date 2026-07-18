@@ -15,5 +15,8 @@ Thumbs.db
 contracts/coverage/
 lcov.info
 contracts/cache/
+contracts/broadcast/
 frontend/.cache/
 *.log
+besu-network/data/
+besu-network/.env
