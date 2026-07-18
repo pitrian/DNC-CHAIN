@@ -14,7 +14,7 @@
 | **Blockchain** | Hardhat/Anvil (Hackathon) → Besu QBFT (TLTN) → Besu + ZKP (KLTN) |
 | **Deploy Target** | Arbitrum Sepolia (Hackathon) |
 | **License** | MIT |
-| **Repository** | [GitHub](https://github.com/your-org/dnc-certitrust) |
+| **Repository** | [GitHub](https://github.com/pitrian/DNC-CHAIN) |
 
 ---
 
@@ -24,9 +24,9 @@
 
 | Milestone | Target | Status | Note |
 |-----------|--------|--------|------|
-| W1: Foundry + AccessControl | Jul 13 | ⬜ | |
-| W2: ProofRegistry + SBT | Jul 20 | ⬜ | |
-| W3: Frontend | Jul 27 | ⬜ | |
+| W1: Contracts + Tests | Jul 13 | ✅ | 60 tests, 100% coverage (core) |
+| W2: Frontend + Local Deploy | Jul 20 | 🔄 | Frontend complete, deployed to Anvil |
+| W3: Arbitrum + Vercel | Jul 27 | ⬜ | Pending faucet ETH |
 | W4: Đóng gói Hackathon | Aug 3 | ⬜ | |
 
 ### ✅ Completed Tasks
@@ -45,15 +45,22 @@
 | Jul 7 | Write ADR docs | 5 architecture decision records | AI |
 | Jul 7 | Write README.md | Full project documentation | AI |
 | Jul 7 | Write PROJECT_LOG.md | This file | AI |
+| Jul 16 | npm install + fix TypeScript | 0 TS errors, tsconfig fix | AI |
+| Jul 16 | Error handling improvements | Tx tracking, proof read hook | AI |
+| Jul 16 | Create pitch deck | docs/pitch-deck.md (14 slides) | AI |
+| Jul 16 | Create Besu QBFT config | Docker Compose 4 validators | AI |
+| Jul 16 | Push to GitHub | github.com/pitrian/DNC-CHAIN | AI |
+| Jul 18 | Setup WalletConnect ID | .env.local configured | AI |
+| Jul 18 | Deploy to Anvil local | 3 contracts deployed | AI |
 
-### ⬜ Pending Tasks (Week 1)
+### ⬜ Pending Tasks
 
 | Task | Priority |
 |------|----------|
-| Create GitHub repo + configure | HIGH |
 | Design logo (Cầu Rồng + blockchain) | MEDIUM |
-| Research Arbitrum Sepolia faucet | HIGH |
-| Install dev environment (Node 20+, Foundry) | HIGH |
+| Deploy to Arbitrum Sepolia (cần faucet) | HIGH |
+| Deploy frontend to Vercel | HIGH |
+| Set up Slither static analysis | MEDIUM |
 
 ---
 
@@ -188,7 +195,15 @@ Total                      : 60 passed, 0 failed
 
 ## Deployment Addresses
 
-### Arbitrum Sepolia
+### Anvil Local (Development)
+
+| Contract | Address |
+|----------|---------|
+| DNCAccessControl | `0x5b73C5498c1E3b4dbA84de0F1833c4a029d90519` |
+| DNCProofRegistry | `0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496` |
+| DNCUniversityDegree | `0x34A1D3fff3958843C43aD80F30b94c510645C316` |
+
+### Arbitrum Sepolia (Pending)
 
 | Contract | Address | Explorer |
 |----------|---------|----------|
@@ -198,8 +213,8 @@ Total                      : 60 passed, 0 failed
 
 ### Frontend
 
-- Production: `https://dnc-certitrust.vercel.app`
-- Staging: `https://staging.dnc-certitrust.vercel.app`
+- Local: `http://localhost:3000`
+- Production: `https://dnc-certitrust.vercel.app` (chưa deploy)
 
 ---
 
@@ -208,12 +223,12 @@ Total                      : 60 passed, 0 failed
 | Week | Date Range | Focus | Tasks Done | Tests |
 |------|------------|-------|------------|-------|
 | W1 | Jul 7-13 | Foundry + Contracts | 12/12 | 60 ✅ |
-| W2 | Jul 14-20 | Frontend | 0/8 | - |
+| W2 | Jul 14-20 | Frontend + Deploy | 5/8 | - |
 | W3 | Jul 21-27 | Integration | 0/6 | - |
 | W4 | Jul 28-Aug 3 | Hackathon Submit | 0/5 | - |
 
 ---
 
 <p align="center">
-  <i>Last updated: July 7, 2026</i>
+  <i>Last updated: July 18, 2026</i>
 </p>

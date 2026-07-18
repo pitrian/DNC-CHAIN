@@ -9,8 +9,8 @@ import '../styles/globals.css';
 
 const config = getDefaultConfig({
   appName: 'DNC-CertiTrust',
-  projectId: 'YOUR_WALLETCONNECT_PROJECT_ID',
-  chains: [arbitrumSepolia, hardhat],
+  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'bd3720a513eeaf9382a663b7139a3eac',
+  chains: [hardhat, arbitrumSepolia],
   ssr: true,
 });
 

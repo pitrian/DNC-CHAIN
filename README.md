@@ -5,6 +5,7 @@
 [![Solidity](https://img.shields.io/badge/Solidity-0.8.28-blue)](https://soliditylang.org/)
 [![Tests](https://img.shields.io/badge/Tests-60%20passed-brightgreen)](contracts/test/)
 [![Coverage](https://img.shields.io/badge/Coverage-100%25%20core%20contracts-brightgreen)](contracts/test/)
+[![GitHub](https://img.shields.io/badge/GitHub-pitrian%2FDNC--CHAIN-181717?logo=github)](https://github.com/pitrian/DNC-CHAIN)
 
 > **Da Nang City CertiTrust** — A permissioned blockchain-based diploma and document verification system built for Da Nang City's digital government infrastructure (DNC-Chain / Đề án 2728).
 
@@ -223,8 +224,8 @@ Soulbound Diploma token (ERC-5192 + ERC-721URIStorage).
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/dnc-certitrust.git
-cd dnc-certitrust
+git clone https://github.com/pitrian/DNC-CHAIN.git
+cd DNC-CHAIN
 
 # Install Foundry dependencies
 cd contracts
@@ -249,56 +250,70 @@ forge coverage
 
 ### Deploy Locally
 
+**Terminal 1:** Start Anvil
 ```bash
-# Start Anvil local node
-anvil
+anvil --host 0.0.0.0 --port 8545
+```
 
-# In another terminal, deploy contracts
+**Terminal 2:** Deploy contracts
+```bash
 cd contracts
 forge script script/Deploy.s.sol:DeployLocalScript \
     --rpc-url http://localhost:8545 \
-    --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
     --broadcast
 ```
 
-### Deploy to Arbitrum Sepolia
+### Deploy to Arbitrum Sepolia (Pending)
 
 ```bash
 cd contracts
 
 # Set up environment
-cp .env.example .env
-# Edit .env with your private key
+export DEPLOYER_PRIVATE_KEY=your_private_key_here
 
 # Deploy
 forge script script/Deploy.s.sol:DeployScript \
-    --rpc-url $ARBITRUM_SEPOLIA_RPC_URL \
-    --private-key $DEPLOYER_PRIVATE_KEY \
-    --broadcast \
-    --verify
+    --rpc-url https://sepolia-rollup.arbitrum.io/rpc \
+    --broadcast
 ```
 
 ### Frontend Setup
 
 ```bash
 cd frontend
-pnpm install
-pnpm dev
+npm install
+npm run dev
+```
+
+Then open `http://localhost:3000`.
+
+### Local Dev (All in One)
+
+```bash
+./scripts/dev.sh
 ```
 
 ---
 
 ## Deployment
 
-### Arbitrum Sepolia (Hackathon)
+### Anvil Local (Development)
+
+| Contract | Address |
+|----------|---------|
+| DNCAccessControl | `0x5b73C5498c1E3b4dbA84de0F1833c4a029d90519` |
+| DNCProofRegistry | `0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496` |
+| DNCUniversityDegree | `0x34A1D3fff3958843C43aD80F30b94c510645C316` |
+
+### Arbitrum Sepolia (Pending — need faucet ETH)
 
 | Contract | Address | Explorer |
 |----------|---------|----------|
-| DNCAccessControl | `0x...` | [Link]() |
-| DNCProofRegistry | `0x...` | [Link]() |
-| DNCUniversityDegree | `0x...` | [Link]() |
+| DNCAccessControl | `0x...` | — |
+| DNCProofRegistry | `0x...` | — |
+| DNCUniversityDegree | `0x...` | — |
 
-**Frontend:** `https://dnc-certitrust.vercel.app`
+**Frontend:** Local — `http://localhost:3000`
 
 ---
 
@@ -369,12 +384,15 @@ const owner = await publicClient.readContract({
 ### Phase 1 — Hackathon MVP (Jul-Aug 2026)
 - [x] Smart contract development (AccessControl, ProofRegistry, SBT)
 - [x] Unit tests (60 tests, 100% core coverage)
-- [ ] Frontend (Issuer portal, Verifier portal, Dashboard)
-- [ ] Deploy to Arbitrum Sepolia
-- [ ] Pitch deck & demo video
+- [x] Frontend (Issuer portal, Verifier portal, Dashboard)
+- [x] Deploy to local Anvil
+- [x] Pitch deck ([docs/pitch-deck.md](docs/pitch-deck.md))
+- [ ] Deploy to Arbitrum Sepolia (need faucet ETH)
+- [ ] Demo video
 - [ ] BLI Legal Tech Hackathon submission
 
 ### Phase 2 — Undergraduate Thesis (Sep-Dec 2026)
+- [x] Besu QBFT Docker Compose template ([besu-network/](besu-network/))
 - [ ] Migrate to Hyperledger Besu QBFT (4 validators)
 - [ ] M1 Bridge (VBSN interoperability)
 - [ ] M7 Data Sanitization Hub
@@ -420,10 +438,16 @@ dnc-certitrust/
 │       │   └── dashboard.tsx      # Event viewer (real-time)
 │       ├── components/
 │       └── utils/
+├── besu-network/                 # Hyperledger Besu QBFT (Phase 2)
+│   ├── docker-compose.yml        # 4 validator nodes
+│   ├── scripts/setup.sh          # Key generation & genesis builder
+│   └── README.md
 ├── docs/                         # Documentation
 │   ├── adr/                      # Architecture Decision Records
-│   └── ARCHITECTURE.md
+│   ├── pitch-deck.md             # Hackathon pitch (14 slides)
+│   └── day2.md                   # Day 2 development log
 ├── scripts/                      # Utility scripts
+│   └── dev.sh                    # Start local dev environment
 ├── README.md                     # This file
 └── PROJECT_LOG.md                # Development log
 ```
