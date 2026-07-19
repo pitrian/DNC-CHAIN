@@ -1,13 +1,109 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import WalletConnect from '../components/WalletConnect';
 import EventStream from '../components/EventStream';
 import DegreeCard from '../components/DegreeCard';
 import { useAccount } from 'wagmi';
-import { useIsAuthority } from '../hooks/useContract';
+import { useWaitForTransactionReceipt } from 'wagmi';
+import { useIsAuthority, useIsAdmin, useAccessControl } from '../hooks/useContract';
+import { shortenAddress } from '../utils/hash';
+
+function AdminPanel() {
+  const { grantAuthorityRole, revokeAuthorityRole, txHash } = useAccessControl();
+  const [targetAddress, setTargetAddress] = useState('');
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+  const [action, setAction] = useState<'grant' | 'revoke' | null>(null);
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash: txHash });
+
+  useEffect(() => {
+    if (isConfirmed && action && targetAddress) {
+      setStatus({
+        type: 'success',
+        message: `Successfully ${action === 'grant' ? 'granted' : 'revoked'} AUTHORITY role for ${shortenAddress(targetAddress as `0x${string}`)}`,
+      });
+      setTargetAddress('');
+      setAction(null);
+    }
+  }, [isConfirmed, action, targetAddress]);
+
+  const handleGrant = () => {
+    const addr = targetAddress.trim() as `0x${string}`;
+    if (!addr.startsWith('0x') || addr.length !== 42) {
+      setStatus({ type: 'error', message: 'Invalid address format' });
+      return;
+    }
+    setAction('grant');
+    grantAuthorityRole(addr);
+    setStatus({ type: 'info', message: 'Transaction submitted...' });
+  };
+
+  const handleRevoke = () => {
+    const addr = targetAddress.trim() as `0x${string}`;
+    if (!addr.startsWith('0x') || addr.length !== 42) {
+      setStatus({ type: 'error', message: 'Invalid address format' });
+      return;
+    }
+    setAction('revoke');
+    revokeAuthorityRole(addr);
+    setStatus({ type: 'info', message: 'Transaction submitted...' });
+  };
+
+  return (
+    <div className="card border-2 border-amber-200 bg-amber-50/50">
+      <div className="flex items-center space-x-2 mb-4">
+        <div className="w-3 h-3 bg-amber-500 rounded-full" />
+        <h3 className="font-semibold text-dnc-blue-900">Admin Panel</h3>
+      </div>
+      <p className="text-sm text-gray-600 mb-4">
+        Manage AUTHORITY roles — accounts with this role can mint diplomas.
+      </p>
+      <div className="space-y-3">
+        <input
+          type="text"
+          value={targetAddress}
+          onChange={(e) => setTargetAddress(e.target.value)}
+          placeholder="0x... (target wallet address)"
+          className="input-field font-mono text-sm"
+        />
+        <div className="flex space-x-3">
+          <button
+            onClick={handleGrant}
+            disabled={!targetAddress || isConfirming}
+            className="flex-1 bg-green-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
+          >
+            {isConfirming && action === 'grant' ? 'Confirming...' : 'Grant Authority'}
+          </button>
+          <button
+            onClick={handleRevoke}
+            disabled={!targetAddress || isConfirming}
+            className="flex-1 bg-red-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+          >
+            {isConfirming && action === 'revoke' ? 'Confirming...' : 'Revoke Authority'}
+          </button>
+        </div>
+        {status && (
+          <div
+            className={`p-3 rounded-lg text-sm ${
+              status.type === 'success'
+                ? 'bg-green-50 text-green-800 border border-green-200'
+                : status.type === 'error'
+                ? 'bg-red-50 text-red-800 border border-red-200'
+                : 'bg-blue-50 text-blue-800 border border-blue-200'
+            }`}
+          >
+            {status.message}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
   const { isAuthority } = useIsAuthority(address);
+  const { isAdmin } = useIsAdmin(address);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
@@ -32,27 +128,39 @@ export default function DashboardPage() {
 
         <div className="space-y-6">
           {isConnected && (
-            <div className="card">
-              <h3 className="font-semibold text-dnc-blue-900 mb-3">Account Info</h3>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Address:</span>
-                  <span className="font-mono text-gray-800">
-                    {address?.slice(0, 6)}...{address?.slice(-4)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Authority:</span>
-                  <span
-                    className={`font-medium ${
-                      isAuthority ? 'text-green-600' : 'text-gray-400'
-                    }`}
-                  >
-                    {isAuthority ? 'Yes ✓' : 'No'}
-                  </span>
+            <>
+              <div className="card">
+                <h3 className="font-semibold text-dnc-blue-900 mb-3">Account Info</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Address:</span>
+                    <span className="font-mono text-gray-800">
+                      {shortenAddress(address!)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Role:</span>
+                    <span className="font-medium text-gray-800">
+                      {isAdmin ? 'DEFAULT_ADMIN' : isAuthority ? 'AUTHORITY' : 'USER'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Authority:</span>
+                    <span className={`font-medium ${isAuthority ? 'text-green-600' : 'text-gray-400'}`}>
+                      {isAuthority ? 'Yes ✓' : 'No'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">Admin:</span>
+                    <span className={`font-medium ${isAdmin ? 'text-amber-600' : 'text-gray-400'}`}>
+                      {isAdmin ? 'Yes ⚙' : 'No'}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              {isAdmin && <AdminPanel />}
+            </>
           )}
 
           <DegreeCard />
@@ -64,18 +172,16 @@ export default function DashboardPage() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Network:</span>
-                <span className="text-gray-800 font-medium">Arbitrum Sepolia</span>
+                <span className="text-gray-800 font-medium">Anvil (Local)</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Chain ID:</span>
+                <span className="text-gray-800 font-medium">31337</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Standard:</span>
                 <span className="text-gray-800 font-medium">
                   ERC-5192 (Soulbound)
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Consensus:</span>
-                <span className="text-gray-800 font-medium">
-                  PoA (QBFT) — Phase 2
                 </span>
               </div>
             </div>

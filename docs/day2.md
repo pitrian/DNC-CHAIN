@@ -56,9 +56,9 @@ Day 2 focused on completing the frontend (fixing TypeScript errors, improving er
 |------|--------|--------|
 | Anvil | Started on `localhost:8545`, chain ID 31337 | ✅ |
 | Deploy script | `forge script DeployLocalScript` | ✅ |
-| DNCAccessControl | `0x5b73C5498c1E3b4dbA84de0F1833c4a029d90519` | ✅ |
-| DNCProofRegistry | `0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496` | ✅ |
-| DNCUniversityDegree | `0x34A1D3fff3958843C43aD80F30b94c510645C316` | ✅ |
+| DNCAccessControl | `0x5FbDB2315678afecb367f032d93F642f64180aa3` | ✅ |
+| DNCProofRegistry | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` | ✅ |
+| DNCUniversityDegree | `0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0` | ✅ |
 
 ### 6. Pitch Deck
 
@@ -92,9 +92,9 @@ Day 2 focused on completing the frontend (fixing TypeScript errors, improving er
 
 | Contract | Address |
 |----------|---------|
-| **DNCAccessControl** | `0x5b73C5498c1E3b4dbA84de0F1833c4a029d90519` |
-| **DNCProofRegistry** | `0x7FA9385bE102ac3EAc297483Dd6233D62b3e1496` |
-| **DNCUniversityDegree** | `0x34A1D3fff3958843C43aD80F30b94c510645C316` |
+| **DNCAccessControl** | `0x5FbDB2315678afecb367f032d93F642f64180aa3` |
+| **DNCProofRegistry** | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` |
+| **DNCUniversityDegree** | `0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0` |
 | **Anvil RPC** | `http://localhost:8545` |
 | **Chain ID** | `31337` |
 

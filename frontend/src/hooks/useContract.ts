@@ -4,17 +4,10 @@ import { getAddress } from 'viem';
 
 const ACCESS_CONTROL_ABI = [
   {
-    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-    name: 'isAuthority',
-    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'bytes32', name: 'role', type: 'bytes32' }],
+    inputs: [],
     name: 'DEFAULT_ADMIN_ROLE',
     outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
-    stateMutability: 'view',
+    stateMutability: 'pure',
     type: 'function',
   },
   {
@@ -25,6 +18,48 @@ const ACCESS_CONTROL_ABI = [
     name: 'hasRole',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'isAuthority',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'isUser',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'grantAuthorityRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'revokeAuthorityRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'grantUserRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'revokeUserRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
 ] as const;
@@ -221,6 +256,59 @@ export function useIsAuthority(address: `0x${string}` | undefined) {
   });
 
   return { isAuthority: !!isAuthority, isLoading };
+}
+
+const DEFAULT_ADMIN = '0x0000000000000000000000000000000000000000000000000000000000000000' as `0x${string}`;
+
+export function useIsAdmin(address: `0x${string}` | undefined) {
+  const { accessControlAddress } = useContracts();
+
+  const { data: isAdmin, isLoading } = useReadContract({
+    address: accessControlAddress,
+    abi: ACCESS_CONTROL_ABI,
+    functionName: 'hasRole',
+    args: address ? [DEFAULT_ADMIN, address] : undefined,
+    query: { enabled: !!address },
+  });
+
+  return { isAdmin: !!isAdmin, isLoading };
+}
+
+export function useAccessControl() {
+  const { accessControlAddress } = useContracts();
+  const { data: txHash, writeContract } = useWriteContract();
+
+  return {
+    txHash,
+    grantAuthorityRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'grantAuthorityRole',
+        args: [account],
+      }),
+    revokeAuthorityRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'revokeAuthorityRole',
+        args: [account],
+      }),
+    grantUserRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'grantUserRole',
+        args: [account],
+      }),
+    revokeUserRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'revokeUserRole',
+        args: [account],
+      }),
+  };
 }
 
 export function useProofRegistry() {
