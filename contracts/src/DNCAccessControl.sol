@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 contract DNCAccessControl is AccessControl {
     bytes32 public constant AUTHORITY_ROLE = keccak256("AUTHORITY_ROLE");
     bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
+    bytes32 public constant EDUCATION_ROLE = keccak256("EDUCATION_ROLE");
+    bytes32 public constant SCIENCE_TECH_ROLE = keccak256("SCIENCE_TECH_ROLE");
 
     event RoleGrantedWithLabel(
         bytes32 indexed role, address indexed account, string roleLabel
@@ -30,6 +32,16 @@ contract DNCAccessControl is AccessControl {
 
     modifier onlyAuthority() {
         _checkRole(AUTHORITY_ROLE);
+        _;
+    }
+
+    modifier onlyEducation() {
+        _checkRole(EDUCATION_ROLE);
+        _;
+    }
+
+    modifier onlyScienceTech() {
+        _checkRole(SCIENCE_TECH_ROLE);
         _;
     }
 
@@ -59,12 +71,46 @@ contract DNCAccessControl is AccessControl {
         emit RoleRevokedWithLabel(USER_ROLE, account, "USER");
     }
 
+    function grantEducationRole(address account) external onlyAdmin {
+        if (hasRole(EDUCATION_ROLE, account)) {
+            revert AlreadyHasRole(EDUCATION_ROLE, account);
+        }
+        _grantRole(EDUCATION_ROLE, account);
+        emit RoleGrantedWithLabel(EDUCATION_ROLE, account, "EDUCATION");
+    }
+
+    function revokeEducationRole(address account) external onlyAdmin {
+        _revokeRole(EDUCATION_ROLE, account);
+        emit RoleRevokedWithLabel(EDUCATION_ROLE, account, "EDUCATION");
+    }
+
+    function grantScienceTechRole(address account) external onlyAdmin {
+        if (hasRole(SCIENCE_TECH_ROLE, account)) {
+            revert AlreadyHasRole(SCIENCE_TECH_ROLE, account);
+        }
+        _grantRole(SCIENCE_TECH_ROLE, account);
+        emit RoleGrantedWithLabel(SCIENCE_TECH_ROLE, account, "SCIENCE_TECH");
+    }
+
+    function revokeScienceTechRole(address account) external onlyAdmin {
+        _revokeRole(SCIENCE_TECH_ROLE, account);
+        emit RoleRevokedWithLabel(SCIENCE_TECH_ROLE, account, "SCIENCE_TECH");
+    }
+
     function isAuthority(address account) external view returns (bool) {
         return hasRole(AUTHORITY_ROLE, account);
     }
 
     function isUser(address account) external view returns (bool) {
         return hasRole(USER_ROLE, account);
+    }
+
+    function isEducation(address account) external view returns (bool) {
+        return hasRole(EDUCATION_ROLE, account);
+    }
+
+    function isScienceTech(address account) external view returns (bool) {
+        return hasRole(SCIENCE_TECH_ROLE, account);
     }
 
     error ZeroAddress();

@@ -36,6 +36,20 @@ const ACCESS_CONTROL_ABI = [
   },
   {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'isEducation',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'isScienceTech',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: 'grantAuthorityRole',
     outputs: [],
     stateMutability: 'nonpayable',
@@ -58,6 +72,34 @@ const ACCESS_CONTROL_ABI = [
   {
     inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
     name: 'revokeUserRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'grantEducationRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'revokeEducationRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'grantScienceTechRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'revokeScienceTechRole',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -282,6 +324,42 @@ export function useIsAdmin(address: `0x${string}` | undefined) {
   return { isAdmin: !!isAdmin, isLoading };
 }
 
+export function useIsEducation(address: `0x${string}` | undefined) {
+  const { accessControlAddress } = useContracts();
+
+  const { data: isEducation, isLoading, error } = useReadContract({
+    address: accessControlAddress,
+    abi: ACCESS_CONTROL_ABI,
+    functionName: 'isEducation',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
+
+  useEffect(() => {
+    if (error) console.error('[useIsEducation]', error);
+  }, [error]);
+
+  return { isEducation: !!isEducation, isLoading };
+}
+
+export function useIsScienceTech(address: `0x${string}` | undefined) {
+  const { accessControlAddress } = useContracts();
+
+  const { data: isScienceTech, isLoading, error } = useReadContract({
+    address: accessControlAddress,
+    abi: ACCESS_CONTROL_ABI,
+    functionName: 'isScienceTech',
+    args: address ? [address] : undefined,
+    query: { enabled: !!address },
+  });
+
+  useEffect(() => {
+    if (error) console.error('[useIsScienceTech]', error);
+  }, [error]);
+
+  return { isScienceTech: !!isScienceTech, isLoading };
+}
+
 export function useAccessControl() {
   const { accessControlAddress } = useContracts();
   const { data: txHash, writeContract } = useWriteContract();
@@ -314,6 +392,34 @@ export function useAccessControl() {
         address: accessControlAddress,
         abi: ACCESS_CONTROL_ABI,
         functionName: 'revokeUserRole',
+        args: [account],
+      }),
+    grantEducationRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'grantEducationRole',
+        args: [account],
+      }),
+    revokeEducationRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'revokeEducationRole',
+        args: [account],
+      }),
+    grantScienceTechRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'grantScienceTechRole',
+        args: [account],
+      }),
+    revokeScienceTechRole: (account: `0x${string}`) =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'revokeScienceTechRole',
         args: [account],
       }),
   };

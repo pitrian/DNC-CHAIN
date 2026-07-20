@@ -47,6 +47,13 @@ contract DNCUniversityDegree is ERC721URIStorage, IERC5192 {
         nextTokenId = 1;
     }
 
+    modifier onlyEducation() {
+        if (!accessControl.isEducation(msg.sender)) {
+            revert Unauthorized(msg.sender);
+        }
+        _;
+    }
+
     modifier onlyAuthority() {
         if (!accessControl.isAuthority(msg.sender)) {
             revert Unauthorized(msg.sender);
@@ -56,7 +63,7 @@ contract DNCUniversityDegree is ERC721URIStorage, IERC5192 {
 
     function mintDegree(address to, string memory uri)
         external
-        onlyAuthority
+        onlyEducation
         returns (uint256)
     {
         if (to == address(0)) revert ZeroAddress();

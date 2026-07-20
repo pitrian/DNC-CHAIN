@@ -10,11 +10,9 @@ export default function Layout({ children }: LayoutProps) {
     <div className="min-h-screen flex flex-col">
       <header className="bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-dnc-blue-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">D</span>
-              </div>
+          <div className="grid grid-cols-3 items-center h-16">
+            <Link href="/" className="flex items-center space-x-3 justify-self-start">
+              <img src="/assets/logo.svg" alt="DNC Logo" className="h-10" />
               <div>
                 <h1 className="text-lg font-bold text-dnc-blue-900 leading-tight">
                   DNC-CertiTrust
@@ -25,12 +23,18 @@ export default function Layout({ children }: LayoutProps) {
               </div>
             </Link>
 
-            <nav className="flex items-center space-x-6">
+            <nav className="flex items-center justify-center space-x-5">
+              <Link
+                href="/de-an"
+                className="text-sm font-medium text-gray-600 hover:text-dnc-blue-600 transition-colors"
+              >
+                Đề án
+              </Link>
               <Link
                 href="/issuer"
                 className="text-sm font-medium text-gray-600 hover:text-dnc-blue-600 transition-colors"
               >
-                Issuer Portal
+                Issuer
               </Link>
               <Link
                 href="/verifier"
@@ -39,10 +43,22 @@ export default function Layout({ children }: LayoutProps) {
                 Verify
               </Link>
               <Link
+                href="/wallet"
+                className="text-sm font-medium text-gray-600 hover:text-dnc-blue-600 transition-colors"
+              >
+                Wallet
+              </Link>
+              <Link
                 href="/dashboard"
                 className="text-sm font-medium text-gray-600 hover:text-dnc-blue-600 transition-colors"
               >
                 Dashboard
+              </Link>
+              <Link
+                href="/huong-dan"
+                className="text-sm font-medium text-gray-600 hover:text-dnc-blue-600 transition-colors"
+              >
+                H.dẫn
               </Link>
             </nav>
           </div>

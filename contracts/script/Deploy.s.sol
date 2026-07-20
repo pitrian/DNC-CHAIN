@@ -43,6 +43,9 @@ contract DeployLocalScript is Script {
 
         DNCAccessControl accessControl = new DNCAccessControl(deployer);
 
+        accessControl.grantEducationRole(deployer);
+        accessControl.grantScienceTechRole(deployer);
+
         DNCProofRegistry registry = new DNCProofRegistry(
             address(accessControl)
         );
@@ -59,5 +62,10 @@ contract DeployLocalScript is Script {
         console.log("DNCAccessControl:", address(accessControl));
         console.log("DNCProofRegistry:", address(registry));
         console.log("DNCUniversityDegree:", address(degree));
+
+        console.log("Roles granted to deployer:");
+        console.log("  DEFAULT_ADMIN_ROLE: true");
+        console.log("  EDUCATION_ROLE: true");
+        console.log("  SCIENCE_TECH_ROLE: true");
     }
 }

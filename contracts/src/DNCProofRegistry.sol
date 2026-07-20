@@ -43,8 +43,8 @@ contract DNCProofRegistry {
         accessControl = DNCAccessControl(accessControlAddress);
     }
 
-    modifier onlyAuthority() {
-        if (!accessControl.isAuthority(msg.sender)) {
+    modifier onlyScienceTech() {
+        if (!accessControl.isScienceTech(msg.sender)) {
             revert Unauthorized(msg.sender);
         }
         _;
@@ -61,7 +61,7 @@ contract DNCProofRegistry {
         _;
     }
 
-    function registerProof(bytes32 fileHash) external onlyAuthority {
+    function registerProof(bytes32 fileHash) external onlyScienceTech {
         if (fileHash == bytes32(0)) revert EmptyHash();
         if (proofExists[fileHash]) revert ProofAlreadyExists(fileHash);
 

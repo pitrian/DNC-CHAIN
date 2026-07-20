@@ -3,11 +3,16 @@ import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
 import WalletConnect from '../components/WalletConnect';
 import FileUploader from '../components/FileUploader';
-import { useIsAuthority, useProofRegistry, useDegreeContract } from '../hooks/useContract';
+import { useIsAuthority, useIsEducation, useIsScienceTech, useProofRegistry, useDegreeContract } from '../hooks/useContract';
 
 export default function IssuerPage() {
   const { address, isConnected } = useAccount();
-  const { isAuthority, isLoading: checkingRole } = useIsAuthority(address);
+  const { isAuthority } = useIsAuthority(address);
+  const { isEducation } = useIsEducation(address);
+  const { isScienceTech } = useIsScienceTech(address);
+  const canMint = isEducation || isAuthority;
+  const canRegister = isScienceTech || isAuthority;
+  const isAllowed = canMint || canRegister;
   const { registerProof, txHash: proofTxHash } = useProofRegistry();
   const { mintDegree, txHash: degreeTxHash } = useDegreeContract();
 
@@ -101,12 +106,7 @@ export default function IssuerPage() {
 
       {isConnected && (
         <>
-          {checkingRole ? (
-            <div className="card text-center py-8">
-              <div className="animate-spin h-8 w-8 border-4 border-dnc-blue-600 border-t-transparent rounded-full mx-auto mb-4" />
-              <p className="text-gray-600">Verifying authorization...</p>
-            </div>
-          ) : !isAuthority ? (
+          {!isAllowed ? (
             <div className="card text-center py-8">
               <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -114,41 +114,54 @@ export default function IssuerPage() {
                 </svg>
               </div>
               <h3 className="text-lg font-semibold text-dnc-blue-900 mb-2">
-                Unauthorized
+                Không có quyền truy cập
               </h3>
               <p className="text-gray-600">
-                Your wallet does not have the required AUTHORITY role.
-                Please contact the system administrator (DEFAULT_ADMIN).
+                Ví của bạn chưa được cấp quyền. Vui lòng liên hệ quản trị viên (DEFAULT_ADMIN).
               </p>
+              <div className="mt-3 text-xs text-gray-400 space-y-1">
+                <p>• <strong>EDUCATION_ROLE</strong>: Cấp văn bằng (Sở GD&ĐT)</p>
+                <p>• <strong>SCIENCE_TECH_ROLE</strong>: Đăng ký hồ sơ (Sở KH&CN)</p>
+              </div>
             </div>
           ) : (
             <div className="space-y-6">
               <div className="card">
                 <h3 className="font-semibold text-dnc-blue-900 mb-4">
-                  Authorized as Authority
+                  {isEducation && isScienceTech
+                    ? 'Có quyền: Sở GD&ĐT + Sở KH&CN'
+                    : isEducation
+                    ? 'Có quyền: Sở GD&ĐT (EDUCATION_ROLE)'
+                    : isScienceTech
+                    ? 'Có quyền: Sở KH&CN (SCIENCE_TECH_ROLE)'
+                    : 'Có quyền: AUTHORITY_ROLE'}
                 </h3>
 
                 <div className="flex space-x-4 mb-6">
-                  <button
-                    onClick={() => setMode('degree')}
-                    className={`flex-1 py-3 rounded-lg font-medium text-sm transition-colors ${
-                      mode === 'degree'
-                        ? 'bg-dnc-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    Mint Soulbound Diploma
-                  </button>
-                  <button
-                    onClick={() => setMode('proof')}
-                    className={`flex-1 py-3 rounded-lg font-medium text-sm transition-colors ${
-                      mode === 'proof'
-                        ? 'bg-dnc-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
-                  >
-                    Register Document Proof
-                  </button>
+                  {(canMint) && (
+                    <button
+                      onClick={() => setMode('degree')}
+                      className={`flex-1 py-3 rounded-lg font-medium text-sm transition-colors ${
+                        mode === 'degree'
+                          ? 'bg-dnc-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      🎓 Cấp văn bằng
+                    </button>
+                  )}
+                  {(canRegister) && (
+                    <button
+                      onClick={() => setMode('proof')}
+                      className={`flex-1 py-3 rounded-lg font-medium text-sm transition-colors ${
+                        mode === 'proof'
+                          ? 'bg-dnc-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                    >
+                      📄 Đăng ký hồ sơ
+                    </button>
+                  )}
                 </div>
 
                 {mode === 'degree' && (

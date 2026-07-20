@@ -3,96 +3,102 @@ import WalletConnect from '../components/WalletConnect';
 import EventStream from '../components/EventStream';
 import DegreeCard from '../components/DegreeCard';
 import ProofRegistryCard from '../components/ProofRegistryCard';
+import Analytics from '../components/Analytics';
 import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
-import { useIsAuthority, useIsAdmin, useAccessControl } from '../hooks/useContract';
+import { useIsAuthority, useIsAdmin, useIsEducation, useIsScienceTech, useAccessControl } from '../hooks/useContract';
 import { shortenAddress } from '../utils/hash';
 
+interface ActionState {
+  type: 'success' | 'error' | 'info';
+  message: string;
+}
+
 function AdminPanel() {
-  const { grantAuthorityRole, revokeAuthorityRole, txHash } = useAccessControl();
+  const {
+    grantAuthorityRole, revokeAuthorityRole,
+    grantEducationRole, revokeEducationRole,
+    grantScienceTechRole, revokeScienceTechRole,
+    txHash,
+  } = useAccessControl();
   const [targetAddress, setTargetAddress] = useState('');
-  const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
-  const [action, setAction] = useState<'grant' | 'revoke' | null>(null);
+  const [status, setStatus] = useState<ActionState | null>(null);
+  const [pending, setPending] = useState<string | null>(null);
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({ hash: txHash });
 
   useEffect(() => {
-    if (isConfirmed && action && targetAddress) {
-      setStatus({
-        type: 'success',
-        message: `Successfully ${action === 'grant' ? 'granted' : 'revoked'} AUTHORITY role for ${shortenAddress(targetAddress as `0x${string}`)}`,
-      });
+    if (isConfirmed && pending && targetAddress) {
+      setStatus({ type: 'success', message: `✅ Thành công: ${pending} cho ${shortenAddress(targetAddress as `0x${string}`)}` });
       setTargetAddress('');
-      setAction(null);
+      setPending(null);
     }
-  }, [isConfirmed, action, targetAddress]);
+  }, [isConfirmed, pending, targetAddress]);
 
-  const handleGrant = () => {
+  const validate = (): `0x${string}` | null => {
     const addr = targetAddress.trim() as `0x${string}`;
     if (!addr.startsWith('0x') || addr.length !== 42) {
-      setStatus({ type: 'error', message: 'Invalid address format' });
-      return;
+      setStatus({ type: 'error', message: '❌ Địa chỉ ví không hợp lệ' });
+      return null;
     }
-    setAction('grant');
-    grantAuthorityRole(addr);
-    setStatus({ type: 'info', message: 'Transaction submitted...' });
+    return addr;
   };
 
-  const handleRevoke = () => {
-    const addr = targetAddress.trim() as `0x${string}`;
-    if (!addr.startsWith('0x') || addr.length !== 42) {
-      setStatus({ type: 'error', message: 'Invalid address format' });
-      return;
-    }
-    setAction('revoke');
-    revokeAuthorityRole(addr);
-    setStatus({ type: 'info', message: 'Transaction submitted...' });
-  };
+  const actions: { label: string; grant: (a: `0x${string}`) => void; revoke: (a: `0x${string}`) => void }[] = [
+    { label: 'AUTHORITY', grant: grantAuthorityRole, revoke: revokeAuthorityRole },
+    { label: 'EDUCATION', grant: grantEducationRole, revoke: revokeEducationRole },
+    { label: 'SCIENCE_TECH', grant: grantScienceTechRole, revoke: revokeScienceTechRole },
+  ];
 
   return (
     <div className="card border-2 border-amber-200 bg-amber-50/50">
       <div className="flex items-center space-x-2 mb-4">
         <div className="w-3 h-3 bg-amber-500 rounded-full" />
-        <h3 className="font-semibold text-dnc-blue-900">Admin Panel</h3>
+        <h3 className="font-semibold text-dnc-blue-900">Quản lý phân quyền</h3>
       </div>
       <p className="text-sm text-gray-600 mb-4">
-        Manage AUTHORITY roles — accounts with this role can mint diplomas.
+        Quản lý vai trò cho các Sở ban ngành. Nhập địa chỉ ví sau đó chọn thao tác.
       </p>
       <div className="space-y-3">
         <input
           type="text"
           value={targetAddress}
           onChange={(e) => setTargetAddress(e.target.value)}
-          placeholder="0x... (target wallet address)"
+          placeholder="0x... (địa chỉ ví)"
           className="input-field font-mono text-sm"
         />
-        <div className="flex space-x-3">
-          <button
-            onClick={handleGrant}
-            disabled={!targetAddress || isConfirming}
-            className="flex-1 bg-green-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
-          >
-            {isConfirming && action === 'grant' ? 'Confirming...' : 'Grant Authority'}
-          </button>
-          <button
-            onClick={handleRevoke}
-            disabled={!targetAddress || isConfirming}
-            className="flex-1 bg-red-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
-          >
-            {isConfirming && action === 'revoke' ? 'Confirming...' : 'Revoke Authority'}
-          </button>
+        <div className="space-y-2">
+          {actions.map((a) => (
+            <div key={a.label} className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
+              <span className="text-sm font-medium text-gray-700 min-w-[120px]">{a.label}</span>
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => { const addr = validate(); if (addr) { setPending(`Cấp ${a.label}`); a.grant(addr); setStatus({ type: 'info', message: `⏳ Đang cấp ${a.label}...` }); } }}
+                  disabled={!targetAddress || isConfirming}
+                  className="px-3 py-1.5 bg-green-600 text-white rounded-lg text-xs font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
+                >
+                  {isConfirming && pending === `Cấp ${a.label}` ? '...' : 'Cấp'}
+                </button>
+                <button
+                  onClick={() => { const addr = validate(); if (addr) { setPending(`Thu hồi ${a.label}`); a.revoke(addr); setStatus({ type: 'info', message: `⏳ Đang thu hồi ${a.label}...` }); } }}
+                  disabled={!targetAddress || isConfirming}
+                  className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+                >
+                  {isConfirming && pending === `Thu hồi ${a.label}` ? '...' : 'Thu hồi'}
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
         {status && (
-          <div
-            className={`p-3 rounded-lg text-sm ${
-              status.type === 'success'
-                ? 'bg-green-50 text-green-800 border border-green-200'
-                : status.type === 'error'
-                ? 'bg-red-50 text-red-800 border border-red-200'
-                : 'bg-blue-50 text-blue-800 border border-blue-200'
-            }`}
-          >
+          <div className={`p-3 rounded-lg text-sm ${
+            status.type === 'success'
+              ? 'bg-green-50 text-green-800 border border-green-200'
+              : status.type === 'error'
+              ? 'bg-red-50 text-red-800 border border-red-200'
+              : 'bg-blue-50 text-blue-800 border border-blue-200'
+          }`}>
             {status.message}
           </div>
         )}
@@ -190,6 +196,10 @@ export default function DashboardPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      <div className="mt-8">
+        {isConnected && <Analytics />}
       </div>
     </div>
   );
