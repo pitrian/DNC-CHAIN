@@ -1,27 +1,30 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useContracts, PROOF_REGISTRY_ABI } from '../hooks/useContract';
-import { useWatchContractEvent } from 'wagmi';
+import { useContracts, PROOF_REGISTRY_ABI, DEGREE_ABI } from '../hooks/useContract';
+import { useEventPoller } from '../hooks/useEventPoller';
 import { formatTimestamp, shortenAddress, truncateHash } from '../utils/hash';
 
 interface Event {
-  type: 'registered' | 'verified' | 'revoked';
+  type: 'registered' | 'verified' | 'revoked' | 'minted';
   hash: string;
   actor: string;
   timestamp: number;
   valid?: boolean;
+  tokenId?: bigint;
 }
 
 export default function EventStream() {
-  const { proofRegistryAddress } = useContracts();
+  const { proofRegistryAddress, degreeAddress } = useContracts();
   const [events, setEvents] = useState<Event[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const listRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
 
-  useWatchContractEvent({
+  useEventPoller({
     address: proofRegistryAddress,
     abi: PROOF_REGISTRY_ABI,
     eventName: 'DocumentRegistered',
+    interval: 2000,
+    enabled: true,
     onLogs(logs) {
       logs.forEach((log) => {
         if (log.args) {
@@ -39,10 +42,12 @@ export default function EventStream() {
     },
   });
 
-  useWatchContractEvent({
+  useEventPoller({
     address: proofRegistryAddress,
     abi: PROOF_REGISTRY_ABI,
     eventName: 'DocumentVerified',
+    interval: 2000,
+    enabled: true,
     onLogs(logs) {
       logs.forEach((log) => {
         if (log.args) {
@@ -53,6 +58,30 @@ export default function EventStream() {
               actor: (log.args.verifier as string) || '',
               timestamp: Date.now(),
               valid: log.args.valid as boolean,
+            },
+            ...prev,
+          ]);
+        }
+      });
+    },
+  });
+
+  useEventPoller({
+    address: degreeAddress,
+    abi: DEGREE_ABI,
+    eventName: 'DegreeMinted',
+    interval: 2000,
+    enabled: true,
+    onLogs(logs) {
+      logs.forEach((log) => {
+        if (log.args) {
+          setEvents((prev) => [
+            {
+              type: 'minted',
+              hash: (log.args.recipient as string) || '',
+              actor: (log.args.issuer as string) || '',
+              timestamp: Number(log.args.timestamp || 0n),
+              tokenId: log.args.tokenId as bigint,
             },
             ...prev,
           ]);
@@ -77,6 +106,8 @@ export default function EventStream() {
         return 'border-l-blue-500';
       case 'revoked':
         return 'border-l-red-500';
+      case 'minted':
+        return 'border-l-purple-500';
       default:
         return 'border-l-gray-500';
     }
@@ -90,6 +121,8 @@ export default function EventStream() {
         return 'Verified';
       case 'revoked':
         return 'Revoked';
+      case 'minted':
+        return 'Minted';
       default:
         return type;
     }
@@ -113,7 +146,7 @@ export default function EventStream() {
       </div>
 
       <div className="flex space-x-2 mb-4">
-        {['all', 'registered', 'verified', 'revoked'].map((f) => (
+          {['all', 'registered', 'verified', 'revoked', 'minted'].map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
@@ -134,7 +167,7 @@ export default function EventStream() {
       >
         {filtered.length === 0 ? (
           <p className="text-gray-400 text-sm text-center py-8">
-            No events yet. Connect wallet and register a proof to see events.
+            No events yet. Mint a degree or register a proof to see events.
           </p>
         ) : (
           filtered.map((event, i) => (
@@ -152,6 +185,8 @@ export default function EventStream() {
                         ? 'bg-green-100 text-green-800'
                         : event.type === 'verified'
                         ? 'bg-blue-100 text-blue-800'
+                        : event.type === 'minted'
+                        ? 'bg-purple-100 text-purple-800'
                         : 'bg-red-100 text-red-800'
                     }`}
                   >
@@ -162,7 +197,9 @@ export default function EventStream() {
                   </span>
                 </div>
                 <p className="text-xs text-gray-600 mt-1 font-mono">
-                  {truncateHash(event.hash)}
+                  {event.tokenId
+                    ? `Degree #${event.tokenId.toString()}`
+                    : truncateHash(event.hash)}
                 </p>
                 <p className="text-xs text-gray-400">
                   {shortenAddress(event.actor)}

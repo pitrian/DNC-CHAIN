@@ -3,7 +3,15 @@ import { WagmiProvider, createConfig, http } from 'wagmi';
 import { arbitrumSepolia } from 'wagmi/chains';
 import { defineChain } from 'viem';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { RainbowKitProvider, getDefaultConfig } from '@rainbow-me/rainbowkit';
+import {
+  RainbowKitProvider,
+  getDefaultConfig,
+  connectorsForWallets,
+} from '@rainbow-me/rainbowkit';
+import {
+  metaMaskWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets';
 import '@rainbow-me/rainbowkit/styles.css';
 import Layout from '../components/Layout';
 import '../styles/globals.css';
@@ -17,10 +25,27 @@ const anvilLocal = /*#__PURE__*/ defineChain({
   },
 });
 
-const config = getDefaultConfig({
-  appName: 'DNC-CertiTrust',
-  projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID || 'bd3720a513eeaf9382a663b7139a3eac',
+const projectId =
+  process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID ||
+  'bd3720a513eeaf9382a663b7139a3eac';
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'Recommended',
+      wallets: [metaMaskWallet, walletConnectWallet],
+    },
+  ],
+  { appName: 'DNC-CertiTrust', projectId },
+);
+
+const config = createConfig({
+  connectors,
   chains: [anvilLocal, arbitrumSepolia],
+  transports: {
+    [anvilLocal.id]: http('http://127.0.0.1:8545'),
+    [arbitrumSepolia.id]: http(),
+  },
   ssr: true,
 });
 

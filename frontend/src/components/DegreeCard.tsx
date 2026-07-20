@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
-import {
-  useReadContract,
-  useWatchContractEvent,
-} from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 import { useContracts, DEGREE_ABI } from '../hooks/useContract';
+import { useEventPoller } from '../hooks/useEventPoller';
 import { shortenAddress, formatTimestamp } from '../utils/hash';
 
 interface DegreeEvent {
@@ -20,10 +17,12 @@ export default function DegreeCard() {
   const { degreeAddress } = useContracts();
   const [degrees, setDegrees] = useState<DegreeEvent[]>([]);
 
-  useWatchContractEvent({
+  useEventPoller({
     address: degreeAddress,
     abi: DEGREE_ABI,
     eventName: 'DegreeMinted',
+    interval: 2000,
+    enabled: true,
     onLogs(logs) {
       logs.forEach((log) => {
         if (log.args) {
@@ -45,7 +44,7 @@ export default function DegreeCard() {
     abi: DEGREE_ABI,
     functionName: 'getDegreesByOwner',
     args: address ? [address] : undefined,
-    query: { enabled: !!address },
+    query: { enabled: !!address, refetchInterval: 3000 },
   });
 
   return (

@@ -75,7 +75,7 @@ export default function IssuerPage() {
           setIsSubmitting(false);
           return;
         }
-        const metadataUri = `https://dnc-certitrust.vercel.app/api/metadata/${hash}`;
+        const metadataUri = `${window.location.origin}/api/metadata/${hash}`;
         mintDegree(recipient as `0x${string}`, metadataUri);
       }
     } catch (error) {

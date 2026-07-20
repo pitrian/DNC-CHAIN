@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import WalletConnect from '../components/WalletConnect';
 import EventStream from '../components/EventStream';
 import DegreeCard from '../components/DegreeCard';
+import ProofRegistryCard from '../components/ProofRegistryCard';
 import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
 import { useIsAuthority, useIsAdmin, useAccessControl } from '../hooks/useContract';
@@ -164,6 +165,8 @@ export default function DashboardPage() {
           )}
 
           <DegreeCard />
+
+          <ProofRegistryCard />
 
           <div className="card">
             <h3 className="font-semibold text-dnc-blue-900 mb-3">

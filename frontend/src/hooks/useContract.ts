@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useReadContract, useWriteContract } from 'wagmi';
 import { getAddress } from 'viem';
 
@@ -245,7 +245,7 @@ export function useContracts() {
 export function useIsAuthority(address: `0x${string}` | undefined) {
   const { accessControlAddress } = useContracts();
 
-  const { data: isAuthority, isLoading } = useReadContract({
+  const { data: isAuthority, isLoading, error } = useReadContract({
     address: accessControlAddress,
     abi: ACCESS_CONTROL_ABI,
     functionName: 'isAuthority',
@@ -255,6 +255,10 @@ export function useIsAuthority(address: `0x${string}` | undefined) {
     },
   });
 
+  useEffect(() => {
+    if (error) console.error('[useIsAuthority]', error);
+  }, [error]);
+
   return { isAuthority: !!isAuthority, isLoading };
 }
 
@@ -263,13 +267,17 @@ const DEFAULT_ADMIN = '0x0000000000000000000000000000000000000000000000000000000
 export function useIsAdmin(address: `0x${string}` | undefined) {
   const { accessControlAddress } = useContracts();
 
-  const { data: isAdmin, isLoading } = useReadContract({
+  const { data: isAdmin, isLoading, error } = useReadContract({
     address: accessControlAddress,
     abi: ACCESS_CONTROL_ABI,
     functionName: 'hasRole',
     args: address ? [DEFAULT_ADMIN, address] : undefined,
     query: { enabled: !!address },
   });
+
+  useEffect(() => {
+    if (error) console.error('[useIsAdmin]', error);
+  }, [error]);
 
   return { isAdmin: !!isAdmin, isLoading };
 }
@@ -337,7 +345,7 @@ export function useProofRegistry() {
 export function useProofData(fileHash: `0x${string}` | undefined) {
   const { proofRegistryAddress } = useContracts();
 
-  const { data, isLoading } = useReadContract({
+  const { data, isLoading, error } = useReadContract({
     address: proofRegistryAddress,
     abi: PROOF_REGISTRY_ABI,
     functionName: 'getProof',
@@ -350,6 +358,7 @@ export function useProofData(fileHash: `0x${string}` | undefined) {
   return {
     proof: data as { fileHash: `0x${string}`; timestamp: bigint; issuer: `0x${string}`; revoked: boolean } | undefined,
     isLoading,
+    error,
   };
 }
 
