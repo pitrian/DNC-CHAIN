@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
-import WalletConnect from '../components/WalletConnect';
 import FileUploader from '../components/FileUploader';
+import ProtectedRoute from '../components/ProtectedRoute';
 import { useIsAuthority, useIsEducation, useIsScienceTech, useProofRegistry, useDegreeContract } from '../hooks/useContract';
 
 function BatchIssuance() {
@@ -163,7 +163,7 @@ function BatchIssuance() {
   );
 }
 
-export default function IssuerPage() {
+function IssuerPage() {
   const { address, isConnected } = useAccount();
   const { isAuthority } = useIsAuthority(address);
   const { isEducation } = useIsEducation(address);
@@ -256,10 +256,6 @@ export default function IssuerPage() {
         <p className="section-subtitle">
           For authorized government entities to mint Soulbound Degree NFTs and register document proofs
         </p>
-      </div>
-
-      <div className="flex justify-center mb-8">
-        <WalletConnect />
       </div>
 
       {isConnected && (
@@ -374,5 +370,13 @@ export default function IssuerPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ProtectedIssuerPage() {
+  return (
+    <ProtectedRoute requiredRole="issuer">
+      <IssuerPage />
+    </ProtectedRoute>
   );
 }

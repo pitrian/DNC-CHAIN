@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import WalletConnect from '../components/WalletConnect';
 import EventStream from '../components/EventStream';
 import DegreeCard from '../components/DegreeCard';
 import ProofRegistryCard from '../components/ProofRegistryCard';
 import Analytics from '../components/Analytics';
+import ProtectedRoute from '../components/ProtectedRoute';
 import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
 import {
@@ -292,7 +292,7 @@ function RevocationPanel() {
   );
 }
 
-export default function DashboardPage() {
+function DashboardPage() {
   const { address, isConnected } = useAccount();
   const { isAuthority } = useIsAuthority(address);
   const { isAdmin } = useIsAdmin(address);
@@ -311,53 +311,15 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      <div className="flex justify-center mb-8">
-        <WalletConnect />
-      </div>
-
       <div className="grid lg:grid-cols-2 gap-6">
         <EventStream />
 
         <div className="space-y-6">
-          {isConnected && (
+          {isConnected && isAdmin && (
             <>
-              <div className="card">
-                <h3 className="font-semibold text-dnc-blue-900 mb-3">Account Info</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Address:</span>
-                    <span className="font-mono text-gray-800">
-                      {shortenAddress(address!)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Role:</span>
-                    <span className="font-medium text-gray-800">
-                      {isAdmin ? 'DEFAULT_ADMIN' : isAuthority ? 'AUTHORITY' : 'USER'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Authority:</span>
-                    <span className={`font-medium ${isAuthority ? 'text-green-600' : 'text-gray-400'}`}>
-                      {isAuthority ? 'Yes ✓' : 'No'}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-500">Admin:</span>
-                    <span className={`font-medium ${isAdmin ? 'text-amber-600' : 'text-gray-400'}`}>
-                      {isAdmin ? 'Yes ⚙' : 'No'}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {isAdmin && (
-                <>
-                  <AdminPanel />
-                  <EmergencyControl />
-                  <RevocationPanel />
-                </>
-              )}
+              <AdminPanel />
+              <EmergencyControl />
+              <RevocationPanel />
             </>
           )}
 
@@ -393,5 +355,13 @@ export default function DashboardPage() {
         {isConnected && <Analytics />}
       </div>
     </div>
+  );
+}
+
+export default function ProtectedDashboardPage() {
+  return (
+    <ProtectedRoute requiredRole="admin">
+      <DashboardPage />
+    </ProtectedRoute>
   );
 }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAccount, useReadContracts } from 'wagmi';
 import { QRCodeSVG } from 'qrcode.react';
-import WalletConnect from '../components/WalletConnect';
+import ProtectedRoute from '../components/ProtectedRoute';
 import { useContracts, DEGREE_ABI } from '../hooks/useContract';
 import { shortenAddress, formatTimestamp } from '../utils/hash';
 
@@ -12,7 +12,7 @@ interface DegreeMeta {
   loading: boolean;
 }
 
-export default function WalletPage() {
+function WalletPage() {
   const { address, isConnected } = useAccount();
   const { degreeAddress } = useContracts();
   const [degrees, setDegrees] = useState<DegreeMeta[]>([]);
@@ -91,10 +91,6 @@ export default function WalletPage() {
           <span>🔒</span>
           <span>Zero PII On-Chain · SHA-256 Hash Anchor Only</span>
         </div>
-      </div>
-
-      <div className="flex justify-center mb-8">
-        <WalletConnect />
       </div>
 
       {!isConnected && (
@@ -250,5 +246,13 @@ export default function WalletPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ProtectedWalletPage() {
+  return (
+    <ProtectedRoute requiredRole="any">
+      <WalletPage />
+    </ProtectedRoute>
   );
 }
