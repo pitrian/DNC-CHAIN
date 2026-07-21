@@ -83,10 +83,14 @@ export default function WalletPage() {
         <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-2xl mb-4">
           <img src="/assets/logo.svg" alt="DNC" className="h-10" />
         </div>
-        <h1 className="section-title">Ví Công Dân</h1>
+        <h1 className="section-title">Citizen Digital Passport</h1>
         <p className="section-subtitle">
-          Quản lý tập trung văn bằng, chứng chỉ số của bạn trên DNC-Chain
+          Quản lý tập trung văn bằng, chứng chỉ số (Soulbound Tokens) của bạn trên DNC-Chain
         </p>
+        <div className="inline-flex items-center space-x-1.5 mt-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full">
+          <span>🔒</span>
+          <span>Zero PII On-Chain · SHA-256 Hash Anchor Only</span>
+        </div>
       </div>
 
       <div className="flex justify-center mb-8">

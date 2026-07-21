@@ -38,6 +38,8 @@ contract DNCProofRegistryTest is Test {
 
         vm.prank(admin);
         accessControl.grantAuthorityRole(authority);
+        vm.prank(admin);
+        accessControl.grantScienceTechRole(authority);
     }
 
     function test_Constructor_SetsAccessControl() public {

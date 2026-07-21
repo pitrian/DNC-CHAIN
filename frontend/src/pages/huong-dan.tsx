@@ -182,10 +182,10 @@ const faqs = [
 ];
 
 const features = [
-  { icon: '🔍', title: 'Tra cứu & Xác thực', desc: 'Kiểm tra tính hợp lệ của văn bằng — không cần kết nối ví, chỉ cần tải file hoặc nhập mã băm.', accent: 'blue' as AccentColor },
-  { icon: '👛', title: 'Ví Công dân', desc: 'Quản lý tập trung văn bằng, chứng chỉ số của bạn trên DNC-Chain.', accent: 'green' as AccentColor },
-  { icon: '🏛️', title: 'Issuer Portal', desc: 'Dành cho cơ quan có thẩm quyền cấp văn bằng & đăng ký hồ sơ điện tử.', accent: 'purple' as AccentColor },
-  { icon: '📊', title: 'Dashboard', desc: 'Giám sát hoạt động blockchain, thống kê & phân tích, quản lý phân quyền.', accent: 'amber' as AccentColor },
+  { icon: '🔍', title: 'Trust Verification Hub', desc: 'Kiểm tra tính hợp lệ của văn bằng — không cần kết nối ví, chỉ cần tải file hoặc nhập mã băm.', accent: 'blue' as AccentColor },
+  { icon: '👛', title: 'Citizen Digital Passport', desc: 'Quản lý tập trung văn bằng, chứng chỉ số (SBT) của bạn trên DNC-Chain.', accent: 'green' as AccentColor },
+  { icon: '🏛️', title: 'Issuing Authority Portal', desc: 'Dành cho cơ quan có thẩm quyền cấp văn bằng & đăng ký hồ sơ điện tử.', accent: 'purple' as AccentColor },
+  { icon: '📊', title: 'System Governance', desc: 'Giám sát blockchain, RBAC, thống kê & phân tích, quản lý phân quyền.', accent: 'amber' as AccentColor },
 ];
 
 export default function HuongDanPage() {
@@ -239,10 +239,10 @@ export default function HuongDanPage() {
             </h2>
 
             <div className="rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 p-6 sm:p-8">
-              <h3 className="font-semibold text-white mb-5">Tra cứu & Xác thực văn bằng</h3>
+              <h3 className="font-semibold text-white mb-5">Trust Verification Hub</h3>
               <div className="space-y-0">
                 <StepNode number="1" title="Truy cập trang Verify">
-                  <p>Vào trang <strong className="text-blue-400">Verify</strong> (hoặc truy cập <code className="bg-slate-800 px-1.5 py-0.5 rounded text-blue-300 text-xs">/verifier</code>).</p>
+                    <p>Truy cập trang <strong className="text-blue-400">Trust Verification Hub</strong> (hoặc truy cập <code className="bg-slate-800 px-1.5 py-0.5 rounded text-blue-300 text-xs">/verifier</code>).</p>
                 </StepNode>
                 <StepNode number="2" title="Tải file hoặc nhập mã băm">
                   <p><strong>Cách 1:</strong> Kéo thả file PDF văn bằng vào ô tải lên — hệ thống tự động tính mã băm và tra cứu.</p>
@@ -259,13 +259,13 @@ export default function HuongDanPage() {
               </div>
 
               <div className="mt-8 border-t border-slate-800 pt-6">
-                <h3 className="font-semibold text-white mb-5">Quản lý văn bằng (Ví Công dân)</h3>
+                <h3 className="font-semibold text-white mb-5">Citizen Digital Passport (SBT Wallet)</h3>
                 <div className="space-y-0">
                   <StepNode number="1" title="Kết nối ví">
                     <p>Kết nối ví MetaMask (hoặc WalletConnect) qua nút <strong className="text-blue-400">Connect Wallet</strong>.</p>
                   </StepNode>
                   <StepNode number="2" title="Vào trang My Wallet">
-                    <p>Truy cập <strong className="text-blue-400">My Wallet</strong> (hoặc <code className="bg-slate-800 px-1.5 py-0.5 rounded text-blue-300 text-xs">/wallet</code>) để xem danh sách văn bằng ở cột bên trái.</p>
+                    <p>Truy cập <strong className="text-blue-400">Citizen Digital Passport</strong> (hoặc <code className="bg-slate-800 px-1.5 py-0.5 rounded text-blue-300 text-xs">/wallet</code>) để xem danh sách văn bằng ở cột bên trái.</p>
                   </StepNode>
                   <StepNode number="3" title="Xem chi tiết & chia sẻ">
                     <p>Chọn một văn bằng để xem chi tiết: tên, số hiệu, metadata. Dùng <strong className="text-blue-400">QR Code</strong> hoặc nút <strong className="text-blue-400">Sao chép link kiểm chứng</strong> để chia sẻ với nhà tuyển dụng.</p>
@@ -281,11 +281,11 @@ export default function HuongDanPage() {
           <motion.div variants={item}>
             <h2 className="text-lg font-bold text-white mb-6 flex items-center space-x-2">
               <span className="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse" />
-              <span>🏛️ Cho cơ quan (Issuer Portal)</span>
+              <span>🏛️ Cho cơ quan (Issuing Authority Portal)</span>
             </h2>
             <div className="rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 p-6 sm:p-8">
               <p className="text-sm text-slate-300 mb-5">
-                Issuer Portal dành cho các Sở, ban ngành có thẩm quyền. Quyền truy cập được quản lý bởi Admin thông qua hợp đồng <code className="bg-slate-800 px-1.5 py-0.5 rounded text-xs text-purple-300">DNCAccessControl</code>.
+                Issuing Authority Portal dành cho các Sở, ban ngành có thẩm quyền. Quyền truy cập được quản lý bởi Admin thông qua hợp đồng <code className="bg-slate-800 px-1.5 py-0.5 rounded text-xs text-purple-300">DNCAccessControl</code>.
               </p>
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="rounded-xl bg-slate-800/40 border border-slate-700/60 p-5">
@@ -306,23 +306,23 @@ export default function HuongDanPage() {
           <motion.div variants={item}>
             <h2 className="text-lg font-bold text-white mb-6 flex items-center space-x-2">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
-              <span>⚙️ Cho quản trị viên (Dashboard)</span>
+              <span>⚙️ Cho quản trị viên (System Governance)</span>
             </h2>
             <div className="rounded-2xl bg-slate-900/40 backdrop-blur-xl border border-slate-800/60 p-6 sm:p-8">
               <p className="text-sm text-slate-300 mb-5">
-                Dashboard cung cấp các công cụ giám sát và quản trị hệ thống.
+                System Governance cung cấp các công cụ giám sát và quản trị hệ thống.
               </p>
               <div className="grid sm:grid-cols-3 gap-4">
                 <div className="rounded-xl bg-slate-800/40 border border-slate-700/60 p-5">
-                  <p className="font-semibold text-white mb-1">🔐 Quản lý phân quyền</p>
+                  <p className="font-semibold text-white mb-1">🔐 RBAC Control</p>
                   <p className="text-xs text-slate-400">Admin cấp/thu hồi các vai trò: AUTHORITY, EDUCATION, SCIENCE_TECH.</p>
                 </div>
                 <div className="rounded-xl bg-slate-800/40 border border-slate-700/60 p-5">
-                  <p className="font-semibold text-white mb-1">📊 Thống kê & Phân tích</p>
+                  <p className="font-semibold text-white mb-1">📊 Analytics</p>
                   <p className="text-xs text-slate-400">Biểu đồ tổng quan văn bằng, hồ sơ, xác thực theo thời gian thực.</p>
                 </div>
                 <div className="rounded-xl bg-slate-800/40 border border-slate-700/60 p-5 sm:col-span-1">
-                  <p className="font-semibold text-white mb-1">📡 Event Stream</p>
+                  <p className="font-semibold text-white mb-1">📡 On-chain Audit Trail</p>
                   <p className="text-xs text-slate-400">Dòng sự kiện real-time cập nhật mỗi 2 giây.</p>
                 </div>
               </div>

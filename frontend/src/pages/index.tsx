@@ -21,10 +21,10 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-semibold text-dnc-blue-900">
-                  Issuer Portal
+                  Issuing Authority Portal
                 </h3>
                 <p className="text-sm text-gray-600">
-                  For government authorities to mint and register diplomas
+                  For authorized entities to mint SBT degrees & register document proofs
                 </p>
               </div>
             </div>
@@ -42,10 +42,10 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-semibold text-dnc-blue-900">
-                  Verify
+                  Trust Verification Hub
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Tra cứu & xác thực văn bằng, chứng chỉ — không cần kết nối ví
+                  Tra cứu & xác thực văn bằng — không cần kết nối ví, không lưu PII
                 </p>
               </div>
             </div>
@@ -105,10 +105,10 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-semibold text-dnc-blue-900">
-                  My Wallet
+                  Citizen Digital Passport
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Ví Công dân — quản lý văn bằng, chứng chỉ số trên DNC-Chain
+                  SBT Wallet — quản lý văn bằng, chứng chỉ số trên DNC-Chain
                 </p>
               </div>
             </div>
@@ -126,10 +126,10 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="font-semibold text-dnc-blue-900">
-                  Live Dashboard
+                  System Governance
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Giám sát hoạt động blockchain, thống kê & quản lý phân quyền
+                  Giám sát blockchain, RBAC, thống kê & quản lý phân quyền
                 </p>
               </div>
             </div>

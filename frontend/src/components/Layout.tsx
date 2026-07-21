@@ -34,25 +34,25 @@ export default function Layout({ children }: LayoutProps) {
                 href="/issuer"
                 className="text-sm font-medium text-slate-300 hover:text-blue-400 transition-colors"
               >
-                Issuer
+                Issuing
               </Link>
               <Link
                 href="/verifier"
                 className="text-sm font-medium text-slate-300 hover:text-blue-400 transition-colors"
               >
-                Verify
+                Verify Hub
               </Link>
               <Link
                 href="/wallet"
                 className="text-sm font-medium text-slate-300 hover:text-blue-400 transition-colors"
               >
-                Wallet
+                SBT Wallet
               </Link>
               <Link
                 href="/dashboard"
                 className="text-sm font-medium text-slate-300 hover:text-blue-400 transition-colors"
               >
-                Dashboard
+                Governance
               </Link>
               <Link
                 href="/huong-dan"

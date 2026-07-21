@@ -104,6 +104,27 @@ const ACCESS_CONTROL_ABI = [
     stateMutability: 'nonpayable',
     type: 'function',
   },
+  {
+    inputs: [],
+    name: 'pause',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'unpause',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'isPaused',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
 ] as const;
 
 const PROOF_REGISTRY_ABI = [
@@ -165,6 +186,13 @@ const PROOF_REGISTRY_ABI = [
     ],
     name: 'DocumentRegistered',
     type: 'event',
+  },
+  {
+    inputs: [{ internalType: 'bytes32', name: 'fileHash', type: 'bytes32' }],
+    name: 'revokeProof',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
   {
     anonymous: false,
@@ -230,6 +258,13 @@ const DEGREE_ABI = [
     name: 'getDegreesByOwner',
     outputs: [{ internalType: 'uint256[]', name: '', type: 'uint256[]' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
+    name: 'burnDegree',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -480,6 +515,70 @@ export function useDegreeContract() {
         abi: DEGREE_ABI,
         functionName: 'mintDegree',
         args: [to, uri],
+      }),
+  };
+}
+
+export function usePauseControl() {
+  const { accessControlAddress } = useContracts();
+  const { data: txHash, writeContract } = useWriteContract();
+
+  return {
+    txHash,
+    pause: () =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'pause',
+        args: [],
+      }),
+    unpause: () =>
+      writeContract({
+        address: accessControlAddress,
+        abi: ACCESS_CONTROL_ABI,
+        functionName: 'unpause',
+        args: [],
+      }),
+  };
+}
+
+export function useIsSystemPaused() {
+  const { accessControlAddress } = useContracts();
+  const { data, isLoading } = useReadContract({
+    address: accessControlAddress,
+    abi: ACCESS_CONTROL_ABI,
+    functionName: 'isPaused',
+    args: [],
+  });
+  return { isPaused: !!data, isLoading };
+}
+
+export function useRevokeDegree() {
+  const { degreeAddress } = useContracts();
+  const { data: txHash, writeContract } = useWriteContract();
+  return {
+    txHash,
+    burnDegree: (tokenId: bigint) =>
+      writeContract({
+        address: degreeAddress,
+        abi: DEGREE_ABI,
+        functionName: 'burnDegree',
+        args: [tokenId],
+      }),
+  };
+}
+
+export function useRevokeProof() {
+  const { proofRegistryAddress } = useContracts();
+  const { data: txHash, writeContract } = useWriteContract();
+  return {
+    txHash,
+    revokeProof: (fileHash: `0x${string}`) =>
+      writeContract({
+        address: proofRegistryAddress,
+        abi: PROOF_REGISTRY_ABI,
+        functionName: 'revokeProof',
+        args: [fileHash],
       }),
   };
 }

@@ -5,6 +5,164 @@ import WalletConnect from '../components/WalletConnect';
 import FileUploader from '../components/FileUploader';
 import { useIsAuthority, useIsEducation, useIsScienceTech, useProofRegistry, useDegreeContract } from '../hooks/useContract';
 
+function BatchIssuance() {
+  const { mintDegree, txHash } = useDegreeContract();
+  const [input, setInput] = useState('');
+  const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+  const [batchStatus, setBatchStatus] = useState<{
+    total: number; completed: number; failed: number; running: boolean;
+  }>({ total: 0, completed: 0, failed: 0, running: false });
+  const [actionTxHash, setActionTxHash] = useState<`0x${string}` | undefined>();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [addresses, setAddresses] = useState<string[]>([]);
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash: actionTxHash });
+
+  useEffect(() => {
+    if (txHash) setActionTxHash(txHash);
+  }, [txHash]);
+
+  useEffect(() => {
+    if (!batchStatus.running || !addresses.length) return;
+    if (currentIndex >= addresses.length) {
+      setBatchStatus(prev => ({ ...prev, running: false }));
+      setStatus({ type: 'success', message: `✅ Batch mint hoàn tất: ${batchStatus.completed} thành công, ${batchStatus.failed} thất bại` });
+      return;
+    }
+    if (!isConfirming && !txHash) {
+      const addr = addresses[currentIndex].trim() as `0x${string}`;
+      if (addr.startsWith('0x') && addr.length === 42) {
+        const metadataUri = `${window.location.origin}/api/metadata/batch-${currentIndex}`;
+        mintDegree(addr, metadataUri);
+      } else {
+        setBatchStatus(prev => ({ ...prev, failed: prev.failed + 1 }));
+        setCurrentIndex(prev => prev + 1);
+      }
+    }
+  }, [batchStatus.running, currentIndex, isConfirming, txHash, addresses, mintDegree]);
+
+  useEffect(() => {
+    if (isConfirmed && batchStatus.running) {
+      setBatchStatus(prev => ({ ...prev, completed: prev.completed + 1 }));
+      setCurrentIndex(prev => prev + 1);
+      setActionTxHash(undefined);
+    }
+  }, [isConfirmed, batchStatus.running]);
+
+  const parseAddresses = (text: string) => {
+    const lines = text.split('\n').map(l => l.trim()).filter(l => l.startsWith('0x') && l.length === 42);
+    setAddresses(lines);
+    return lines;
+  };
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const text = evt.target?.result as string;
+      setInput(text);
+      parseAddresses(text);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleStartBatch = () => {
+    const parsed = parseAddresses(input);
+    if (!parsed.length) {
+      setStatus({ type: 'error', message: '❌ Không tìm thấy địa chỉ hợp lệ nào' });
+      return;
+    }
+    setBatchStatus({ total: parsed.length, completed: 0, failed: 0, running: true });
+    setCurrentIndex(0);
+    setStatus({ type: 'info', message: `🚀 Bắt đầu batch mint ${parsed.length} văn bằng...` });
+  };
+
+  const preview = parseAddresses(input);
+
+  return (
+    <div className="card border-2 border-blue-200 bg-blue-50/50 mt-6">
+      <div className="flex items-center space-x-2 mb-4">
+        <div className="w-3 h-3 bg-blue-500 rounded-full" />
+        <h3 className="font-semibold text-dnc-blue-900">Batch Issuance · Hàng loạt</h3>
+      </div>
+      <p className="text-sm text-gray-600 mb-4">
+        Dán danh sách địa chỉ (mỗi dòng một địa chỉ) hoặc upload file CSV để cấp văn bằng hàng loạt.
+      </p>
+
+      <textarea
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="0x1234...&#10;0x5678...&#10;0x9abc..."
+        rows={5}
+        className="input-field font-mono text-sm mb-3"
+      />
+
+      <div className="flex items-center space-x-3 mb-4">
+        <label className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-300 transition-colors">
+          📁 Upload CSV
+          <input type="file" accept=".csv,.txt" onChange={handleFileUpload} className="hidden" />
+        </label>
+        <span className="text-xs text-gray-500">CSV với cột "address" hoặc TXT mỗi dòng một địa chỉ</span>
+      </div>
+
+      {preview.length > 0 && (
+        <div className="mb-4 p-3 bg-white/60 rounded-lg">
+          <p className="text-sm font-medium text-gray-700 mb-2">
+            Tìm thấy {preview.length} địa chỉ:
+          </p>
+          <div className="max-h-24 overflow-y-auto space-y-1">
+            {preview.slice(0, 20).map((addr, i) => (
+              <div key={i} className="text-xs font-mono text-gray-600">{addr}</div>
+            ))}
+            {preview.length > 20 && (
+              <div className="text-xs text-gray-400">...và {preview.length - 20} địa chỉ khác</div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {batchStatus.running && (
+        <div className="mb-4">
+          <div className="flex justify-between text-sm mb-1">
+            <span className="text-gray-600">Tiến độ:</span>
+            <span className="font-medium text-dnc-blue-900">{batchStatus.completed + batchStatus.failed} / {batchStatus.total}</span>
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2">
+            <div
+              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${((batchStatus.completed + batchStatus.failed) / batchStatus.total) * 100}%` }}
+            />
+          </div>
+          <div className="flex space-x-4 mt-1 text-xs text-gray-500">
+            <span>✅ {batchStatus.completed}</span>
+            <span>❌ {batchStatus.failed}</span>
+          </div>
+        </div>
+      )}
+
+      <button
+        onClick={handleStartBatch}
+        disabled={!preview.length || batchStatus.running}
+        className="w-full py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+      >
+        {batchStatus.running ? `⏳ Đang mint (${batchStatus.completed + batchStatus.failed}/${batchStatus.total})...` : '🚀 Batch Mint'}
+      </button>
+
+      {status && (
+        <div className={`mt-3 p-3 rounded-lg text-sm ${
+          status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
+            : status.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
+            : 'bg-blue-50 text-blue-800 border border-blue-200'
+        }`}>
+          {status.message}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function IssuerPage() {
   const { address, isConnected } = useAccount();
   const { isAuthority } = useIsAuthority(address);
@@ -94,9 +252,9 @@ export default function IssuerPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="section-title">Issuer Portal</h1>
+        <h1 className="section-title">Issuing Authority Portal</h1>
         <p className="section-subtitle">
-          For government authorities to issue and register digital diplomas
+          For authorized government entities to mint Soulbound Degree NFTs and register document proofs
         </p>
       </div>
 
@@ -184,6 +342,8 @@ export default function IssuerPage() {
                   isUploading={isSubmitting}
                 />
               </div>
+
+              {canMint && <BatchIssuance />}
 
               {status && (
                 <div

@@ -39,6 +39,8 @@ contract DNCUniversityDegreeTest is Test {
 
         vm.prank(admin);
         accessControl.grantAuthorityRole(authority);
+        vm.prank(admin);
+        accessControl.grantEducationRole(authority);
     }
 
     function test_Constructor() public {

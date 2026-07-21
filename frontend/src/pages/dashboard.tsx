@@ -6,7 +6,11 @@ import ProofRegistryCard from '../components/ProofRegistryCard';
 import Analytics from '../components/Analytics';
 import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
-import { useIsAuthority, useIsAdmin, useIsEducation, useIsScienceTech, useAccessControl } from '../hooks/useContract';
+import {
+  useIsAuthority, useIsAdmin, useIsEducation, useIsScienceTech,
+  useAccessControl, usePauseControl, useIsSystemPaused,
+  useRevokeDegree, useRevokeProof,
+} from '../hooks/useContract';
 import { shortenAddress } from '../utils/hash';
 
 interface ActionState {
@@ -55,7 +59,7 @@ function AdminPanel() {
     <div className="card border-2 border-amber-200 bg-amber-50/50">
       <div className="flex items-center space-x-2 mb-4">
         <div className="w-3 h-3 bg-amber-500 rounded-full" />
-        <h3 className="font-semibold text-dnc-blue-900">Quản lý phân quyền</h3>
+        <h3 className="font-semibold text-dnc-blue-900">System Governance · RBAC Control</h3>
       </div>
       <p className="text-sm text-gray-600 mb-4">
         Quản lý vai trò cho các Sở ban ngành. Nhập địa chỉ ví sau đó chọn thao tác.
@@ -107,6 +111,187 @@ function AdminPanel() {
   );
 }
 
+function EmergencyControl() {
+  const { pause, unpause, txHash } = usePauseControl();
+  const { isPaused, isLoading } = useIsSystemPaused();
+  const [status, setStatus] = useState<ActionState | null>(null);
+  const [pendingAction, setPendingAction] = useState<string | null>(null);
+  const [actionTxHash, setActionTxHash] = useState<`0x${string}` | undefined>();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash: actionTxHash });
+
+  useEffect(() => {
+    if (txHash) setActionTxHash(txHash);
+  }, [txHash]);
+
+  useEffect(() => {
+    if (isConfirmed && pendingAction) {
+      setStatus({ type: 'success', message: `✅ ${pendingAction} thành công` });
+      setPendingAction(null);
+      setActionTxHash(undefined);
+    }
+  }, [isConfirmed, pendingAction]);
+
+  if (isLoading) return null;
+
+  return (
+    <div className={`card border-2 ${isPaused ? 'border-red-300 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-2">
+          <div className={`w-3 h-3 rounded-full ${isPaused ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`} />
+          <h3 className="font-semibold text-dnc-blue-900">Emergency Stop · Circuit Breaker</h3>
+        </div>
+        <span className={`px-2 py-1 rounded text-xs font-bold ${
+          isPaused ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+        }`}>
+          {isPaused ? 'PAUSED' : 'ACTIVE'}
+        </span>
+      </div>
+      <p className="text-sm text-gray-600 mb-4">
+        {isPaused
+          ? 'Hệ thống đang tạm dừng. Tất cả mint và register operations đã bị chặn.'
+          : 'Hệ thống đang hoạt động bình thường.'}
+      </p>
+      <div className="flex space-x-3">
+        <button
+          onClick={() => { setPendingAction('Pause'); pause(); setStatus({ type: 'info', message: '⏳ Đang pause...' }); }}
+          disabled={isPaused || isConfirming}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+        >
+          {isConfirming && pendingAction === 'Pause' ? '...' : '⏹ Emergency Stop'}
+        </button>
+        <button
+          onClick={() => { setPendingAction('Unpause'); unpause(); setStatus({ type: 'info', message: '⏳ Đang resume...' }); }}
+          disabled={!isPaused || isConfirming}
+          className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 disabled:opacity-50 transition-colors"
+        >
+          {isConfirming && pendingAction === 'Unpause' ? '...' : '▶ Resume'}
+        </button>
+      </div>
+      {status && (
+        <div className={`mt-3 p-3 rounded-lg text-sm ${
+          status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
+            : status.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
+            : 'bg-blue-50 text-blue-800 border border-blue-200'
+        }`}>
+          {status.message}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function RevocationPanel() {
+  const { burnDegree, txHash: burnTxHash } = useRevokeDegree();
+  const { revokeProof, txHash: revokeTxHash } = useRevokeProof();
+  const [mode, setMode] = useState<'degree' | 'proof'>('degree');
+  const [inputValue, setInputValue] = useState('');
+  const [status, setStatus] = useState<ActionState | null>(null);
+  const [pending, setPending] = useState(false);
+  const [actionTxHash, setActionTxHash] = useState<`0x${string}` | undefined>();
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+    useWaitForTransactionReceipt({ hash: actionTxHash });
+
+  useEffect(() => {
+    if (burnTxHash) setActionTxHash(burnTxHash);
+  }, [burnTxHash]);
+
+  useEffect(() => {
+    if (revokeTxHash) setActionTxHash(revokeTxHash);
+  }, [revokeTxHash]);
+
+  useEffect(() => {
+    if (isConfirmed) {
+      setStatus({
+        type: 'success',
+        message: `✅ Thu hồi ${mode === 'degree' ? 'văn bằng' : 'hồ sơ'} thành công`,
+      });
+      setInputValue('');
+      setPending(false);
+      setActionTxHash(undefined);
+    }
+  }, [isConfirmed, mode]);
+
+  const handleRevoke = () => {
+    const val = inputValue.trim();
+    if (!val) {
+      setStatus({ type: 'error', message: '❌ Vui lòng nhập giá trị' });
+      return;
+    }
+    setPending(true);
+    setStatus({ type: 'info', message: `⏳ Đang thu hồi...` });
+    if (mode === 'degree') {
+      burnDegree(BigInt(val));
+    } else {
+      revokeProof(val as `0x${string}`);
+    }
+  };
+
+  return (
+    <div className="card border-2 border-orange-200 bg-orange-50/50">
+      <div className="flex items-center space-x-2 mb-4">
+        <div className="w-3 h-3 bg-orange-500 rounded-full" />
+        <h3 className="font-semibold text-dnc-blue-900">Revocation Management</h3>
+      </div>
+      <p className="text-sm text-gray-600 mb-4">
+        Thu hồi văn bằng (EDUCATION_ROLE) hoặc hồ sơ (SCIENCE_TECH_ROLE).
+      </p>
+
+      <div className="flex space-x-4 mb-4">
+        <button
+          onClick={() => setMode('degree')}
+          className={`flex-1 py-2 rounded-lg font-medium text-sm transition-colors ${
+            mode === 'degree' ? 'bg-orange-600 text-white' : 'bg-white/60 text-gray-600 hover:bg-gray-100'
+          }`}
+        >
+          🎓 Thu hồi văn bằng
+        </button>
+        <button
+          onClick={() => setMode('proof')}
+          className={`flex-1 py-2 rounded-lg font-medium text-sm transition-colors ${
+            mode === 'proof' ? 'bg-orange-600 text-white' : 'bg-white/60 text-gray-600 hover:bg-gray-100'
+          }`}
+        >
+          📄 Thu hồi hồ sơ
+        </button>
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          {mode === 'degree' ? 'Token ID' : 'FileHash (0x...)'}
+        </label>
+        <input
+          type="text"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={mode === 'degree' ? 'Nhập token ID...' : '0x...'}
+          className="input-field font-mono text-sm"
+        />
+      </div>
+
+      <button
+        onClick={handleRevoke}
+        disabled={!inputValue || isConfirming || pending}
+        className="w-full py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+      >
+        {isConfirming ? '⏳ Đang xử lý...' : '🗑 Xác nhận thu hồi'}
+      </button>
+
+      {status && (
+        <div className={`mt-3 p-3 rounded-lg text-sm ${
+          status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
+            : status.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
+            : 'bg-blue-50 text-blue-800 border border-blue-200'
+        }`}>
+          {status.message}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { address, isConnected } = useAccount();
   const { isAuthority } = useIsAuthority(address);
@@ -120,9 +305,9 @@ export default function DashboardPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
           </svg>
         </div>
-        <h1 className="section-title">Live Dashboard</h1>
+        <h1 className="section-title">System Governance Dashboard</h1>
         <p className="section-subtitle">
-          Real-time blockchain event monitoring for DNC-CertiTrust
+          Real-time on-chain monitoring, RBAC management & analytics for DNC-CertiTrust
         </p>
       </div>
 
@@ -166,7 +351,13 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              {isAdmin && <AdminPanel />}
+              {isAdmin && (
+                <>
+                  <AdminPanel />
+                  <EmergencyControl />
+                  <RevocationPanel />
+                </>
+              )}
             </>
           )}
 

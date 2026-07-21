@@ -38,10 +38,13 @@ It aligns with **Đề án 2728/QĐ-UBND** (Da Nang City's Blockchain Developmen
 ### Key Features
 
 - 🔐 **Soulbound Diplomas** — Non-transferable digital degrees (ERC-5192)
-- 🏛️ **RBAC** — Role-based access control (Admin / Authority / User)
+- 🏛️ **RBAC** — Role-based access control (Admin / Authority / Education / Science & Tech)
 - 📄 **Document Proof Registry** — Tamper-proof hash-based verification
 - 🔍 **Public Verification** — Anyone can verify document authenticity
 - 🛡️ **Soulbound by Design** — Tokens cannot be transferred or approved
+- ⏹️ **Circuit Breaker** — Pausable emergency stop (OpenZeppelin Pausable)
+- 📊 **Analytics Dashboard** — Real-time on-chain metrics & charts
+- 🚀 **Batch Issuance** — CSV/text batch mint for mass diploma issuance
 - 🔗 **Permissioned Ready** — Built for Hyperledger Besu QBFT migration
 
 ---
@@ -62,29 +65,33 @@ DNC-CertiTrust solves this by putting **document hashes on an immutable blockcha
 ## Solution Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      Frontend (Next.js)                      │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────────────────┐  │
-│  │  Issuer  │  │ Verifier │  │       Dashboard          │  │
-│  │  Portal  │  │  Portal  │  │    (Event Viewer)        │  │
-│  └────┬─────┘  └────┬─────┘  └────────────┬─────────────┘  │
-│       │             │                      │                │
-│       └─────────────┼──────────────────────┘                │
-│                     │ WalletConnect (Wagmi + RainbowKit)    │
-├─────────────────────┼───────────────────────────────────────┤
-│            Smart Contract Layer (Solidity 0.8.28)          │
-│  ┌──────────────────┼──────────────────────────────────┐    │
-│  │     DNCUniversityDegree.sol  (ERC-5192 SBT)         │    │
-│  │     DNCProofRegistry.sol      (Document Proof)      │    │
-│  │     DNCAccessControl.sol      (RBAC)                │    │
-│  └──────────────────┼──────────────────────────────────┘    │
-├─────────────────────┼───────────────────────────────────────┤
-│          Blockchain Layer (EVM-compatible)                   │
-│  ┌──────────────────┼──────────────────────────────────┐    │
-│  │  Phase 1: Arbitrum Sepolia  (Hackathon MVP)          │    │
-│  │  Phase 2: Hyperledger Besu QBFT  (Production)        │    │
-│  └─────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                    Frontend Layer (Next.js 14)                    │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────┐  ┌────────────┐  │
+│  │  Issuer  │  │ Verifier │  │   Dashboard  │  │   Citizen  │  │
+│  │  Portal  │  │   Hub    │  │  Governance  │  │Passport(SBT)│  │
+│  └────┬─────┘  └────┬─────┘  └──────┬───────┘  └─────┬──────┘  │
+│       │             │               │                │         │
+│       ├── Batch Issuance ───────────┤                │         │
+│       │                             │                │         │
+│       └──────────┬──────────────────┴────────────────┘         │
+│                  │ Analytics (Recharts)                         │
+│                  │ WalletConnect (Wagmi + RainbowKit)           │
+├──────────────────┼──────────────────────────────────────────────┤
+│           Smart Contract Layer (Solidity 0.8.28)               │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  DNCUniversityDegree.sol  — ERC-5192 SBT (Education)    │   │
+│  │  DNCProofRegistry.sol      — Document Hash Proof (S&T) │   │
+│  │  DNCAccessControl.sol      — RBAC + Pausable           │   │
+│  └──────────────────────┬──────────────────────────────────┘   │
+│                         │ Pausable (Circuit Breaker)            │
+├─────────────────────────┼──────────────────────────────────────┤
+│               Blockchain Layer (EVM-compatible)                 │
+│  ┌──────────────────────┼──────────────────────────────────┐   │
+│  │  Phase 1: Arbitrum Sepolia  (Hackathon MVP)              │   │
+│  │  Phase 2: Hyperledger Besu QBFT  (Production)            │   │
+│  └─────────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ### Data Flow
@@ -154,18 +161,33 @@ Role-based access control for the DNC ecosystem.
 
 ```
 Roles:
-  DEFAULT_ADMIN_ROLE ── Sở KH&CN Đà Nẵng (grant/revoke roles)
-  AUTHORITY_ROLE     ── Sở GD&ĐT, other departments (mint diplomas)
-  USER_ROLE          ── Citizens, businesses (verify only)
+  DEFAULT_ADMIN_ROLE  ── Admin (grant/revoke all roles, pause/unpause)
+  AUTHORITY_ROLE      ── Full authority (mint, register, revoke)
+  EDUCATION_ROLE      ── Sở GD&ĐT (mint degrees, burn degrees)
+  SCIENCE_TECH_ROLE   ── Sở KH&CN (register proofs, revoke proofs)
+  USER_ROLE           ── Citizens, businesses (verify only)
 ```
+
+**Pausable (Circuit Breaker):**
+| Function | Access | Description |
+|----------|--------|-------------|
+| `pause()` | ADMIN | Emergency stop all mint/register operations |
+| `unpause()` | ADMIN | Resume system operations |
+| `isPaused()` | Public | Check if system is paused |
 
 **Key Functions:**
 | Function | Access | Description |
 |----------|--------|-------------|
 | `grantAuthorityRole(address)` | ADMIN | Add an issuing authority |
 | `revokeAuthorityRole(address)` | ADMIN | Remove an issuing authority |
+| `grantEducationRole(address)` | ADMIN | Grant Education role (Sở GD&ĐT) |
+| `revokeEducationRole(address)` | ADMIN | Revoke Education role |
+| `grantScienceTechRole(address)` | ADMIN | Grant Science & Tech role (Sở KH&CN) |
+| `revokeScienceTechRole(address)` | ADMIN | Revoke Science & Tech role |
 | `grantUserRole(address)` | ADMIN | Register a user |
 | `isAuthority(address)` | Public | Check if address has authority |
+| `isEducation(address)` | Public | Check if address has Education role |
+| `isScienceTech(address)` | Public | Check if address has Science & Tech role |
 | `isUser(address)` | Public | Check if address is registered user |
 
 ### DNCProofRegistry.sol
@@ -185,9 +207,9 @@ struct ProofInfo {
 **Key Functions:**
 | Function | Access | Description |
 |----------|--------|-------------|
-| `registerProof(bytes32)` | AUTHORITY | Register document hash |
+| `registerProof(bytes32)` | SCIENCE_TECH | Register document hash |
 | `verifyProof(bytes32)` | Public | Check document validity |
-| `revokeProof(bytes32)` | ADMIN / AUTHORITY | Revoke a registered proof |
+| `revokeProof(bytes32)` | ADMIN / AUTHORITY / SCIENCE_TECH | Revoke a registered proof |
 | `getProof(bytes32)` | Public | Get full proof details |
 
 ### DNCUniversityDegree.sol
@@ -196,16 +218,17 @@ Soulbound Diploma token (ERC-5192 + ERC-721URIStorage).
 
 **Key Properties:**
 - **Non-transferable**: All transfer/approve functions revert
-- **Mint-only**: Only AUTHORITY can mint
-- **Burn**: Owner, AUTHORITY, or ADMIN can burn
+- **Mint-only**: Only EDUCATION_ROLE / AUTHORITY can mint
+- **Burn**: Owner, EDUCATION_ROLE, AUTHORITY, or ADMIN can burn
+- **Pausable**: Mint blocked when system is paused
 - **Metadata**: ERC-721 URI storage for diploma metadata
 - **Interface**: ERC-165 + IERC5192 (`locked() → true`)
 
 **Key Functions:**
 | Function | Access | Description |
 |----------|--------|-------------|
-| `mintDegree(address, string)` | AUTHORITY | Mint a new soulbound diploma |
-| `burnDegree(uint256)` | Owner / AUTHORITY / ADMIN | Burn a diploma |
+| `mintDegree(address, string)` | EDUCATION_ROLE / AUTHORITY | Mint a new soulbound diploma |
+| `burnDegree(uint256)` | Owner / EDUCATION_ROLE / AUTHORITY / ADMIN | Burn a diploma |
 | `locked(uint256)` | Public | Check if token is locked (always true) |
 | `getDegreeIssuer(uint256)` | Public | Get the issuer of a diploma |
 | `getDegreesByOwner(address)` | Public | List all diplomas owned by address |
@@ -302,8 +325,8 @@ Then open `http://localhost:3000`.
 | Contract | Address |
 |----------|---------|
 | DNCAccessControl | `0x5FbDB2315678afecb367f032d93F642f64180aa3` |
-| DNCProofRegistry | `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512` |
-| DNCUniversityDegree | `0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0` |
+| DNCProofRegistry | `0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9` |
+| DNCUniversityDegree | `0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9` |
 
 ### Arbitrum Sepolia (Pending — need faucet ETH)
 
@@ -385,6 +408,12 @@ const owner = await publicClient.readContract({
 - [x] Smart contract development (AccessControl, ProofRegistry, SBT)
 - [x] Unit tests (60 tests, 100% core coverage)
 - [x] Frontend (Issuer portal, Verifier portal, Dashboard)
+- [x] Analytics dashboard with Recharts
+- [x] Circuit Breaker (Pausable) for emergency stop
+- [x] Batch issuance (CSV/text upload)
+- [x] Revocation management UI
+- [x] HeroSection with animations (Framer Motion)
+- [x] Dark theme guide page
 - [x] Deploy to local Anvil
 - [x] Pitch deck ([docs/pitch-deck.md](docs/pitch-deck.md))
 - [ ] Deploy to Arbitrum Sepolia (need faucet ETH)
@@ -432,12 +461,29 @@ dnc-certitrust/
 ├── frontend/                     # Next.js web application
 │   └── src/
 │       ├── pages/
-│       │   ├── index.tsx          # Landing page
-│       │   ├── issuer.tsx         # Authority portal (mint)
+│       │   ├── index.tsx          # Landing page (HeroSection + nav cards)
+│       │   ├── issuer.tsx         # Authority portal (mint + batch issuance)
 │       │   ├── verifier.tsx       # Public verification portal
-│       │   └── dashboard.tsx      # Event viewer (real-time)
+│       │   ├── dashboard.tsx      # Governance dashboard (RBAC + pause + revoke)
+│       │   ├── wallet.tsx         # Citizen SBT wallet
+│       │   ├── huong-dan.tsx      # Dark theme user guide
+│       │   └── de-an.tsx          # Project 2728 info page
 │       ├── components/
-│       └── utils/
+│       │   ├── HeroSection.tsx    # Animated hero with spotlight cards
+│       │   ├── HeroBackground.tsx # Canvas animated glow + grid
+│       │   ├── TextGenerateEffect.tsx # Word fade-in animation
+│       │   ├── ShimmerButton.tsx  # Shimmer neon glow button
+│       │   ├── GlassButton.tsx    # Glassmorphism button
+│       │   ├── SpotlightCard.tsx  # Mouse-tracking spotlight card
+│       │   ├── Analytics.tsx      # Recharts bar chart + stat cards
+│       │   ├── EventStream.tsx    # Real-time event viewer
+│       │   ├── WalletConnect.tsx  # Wallet connection button
+│       │   ├── FileUploader.tsx   # File hash upload component
+│       │   └── DegreeCard.tsx     # Degree info card
+│       └── hooks/
+│           ├── useContract.ts     # Contract ABIs + hooks (pause, revoke, etc.)
+│           ├── useAnalyticsData.ts # Analytics event polling
+│           └── useEventPoller.ts  # Generic event poller
 ├── besu-network/                 # Hyperledger Besu QBFT (Phase 2)
 │   ├── docker-compose.yml        # 4 validator nodes
 │   ├── scripts/setup.sh          # Key generation & genesis builder

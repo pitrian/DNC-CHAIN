@@ -29,11 +29,15 @@ export default function VerifierPage() {
         <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-2xl mb-4">
           <img src="/assets/logo.svg" alt="DNC" className="h-10" />
         </div>
-        <h1 className="section-title">Tra cứu & Xác thực</h1>
+        <h1 className="section-title">Trust Verification Hub</h1>
         <p className="section-subtitle">
           Kiểm tra tính toàn vẹn của văn bằng, chứng chỉ và hồ sơ điện tử trên
-          DNC-Chain. Không cần kết nối ví.
+          DNC-Chain. <strong>Không cần kết nối ví</strong> — chỉ cần tải file hoặc nhập mã băm.
         </p>
+        <div className="inline-flex items-center space-x-1.5 mt-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full">
+          <span>🔒</span>
+          <span>Zero PII On-Chain · SHA-256 Hash Anchor Only</span>
+        </div>
       </div>
 
       <div className="space-y-8">

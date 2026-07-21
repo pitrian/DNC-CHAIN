@@ -1,8 +1,9 @@
 pragma solidity ^0.8.28;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 
-contract DNCAccessControl is AccessControl {
+contract DNCAccessControl is AccessControl, Pausable {
     bytes32 public constant AUTHORITY_ROLE = keccak256("AUTHORITY_ROLE");
     bytes32 public constant USER_ROLE = keccak256("USER_ROLE");
     bytes32 public constant EDUCATION_ROLE = keccak256("EDUCATION_ROLE");
@@ -114,4 +115,16 @@ contract DNCAccessControl is AccessControl {
     }
 
     error ZeroAddress();
+
+    function pause() external onlyAdmin {
+        _pause();
+    }
+
+    function unpause() external onlyAdmin {
+        _unpause();
+    }
+
+    function isPaused() external view returns (bool) {
+        return paused();
+    }
 }

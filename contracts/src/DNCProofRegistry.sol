@@ -61,7 +61,12 @@ contract DNCProofRegistry {
         _;
     }
 
-    function registerProof(bytes32 fileHash) external onlyScienceTech {
+    modifier whenNotPaused() {
+        require(!accessControl.isPaused(), "System paused");
+        _;
+    }
+
+    function registerProof(bytes32 fileHash) external onlyScienceTech whenNotPaused {
         if (fileHash == bytes32(0)) revert EmptyHash();
         if (proofExists[fileHash]) revert ProofAlreadyExists(fileHash);
 
@@ -86,9 +91,16 @@ contract DNCProofRegistry {
         return valid;
     }
 
-    function revokeProof(bytes32 fileHash) external onlyAdminOrAuthority {
+    function revokeProof(bytes32 fileHash) external {
         if (!proofExists[fileHash]) revert ProofNotFound(fileHash);
         if (proofs[fileHash].revoked) revert ProofAlreadyRevoked(fileHash);
+        if (
+            !accessControl.hasRole(accessControl.DEFAULT_ADMIN_ROLE(), msg.sender)
+                && !accessControl.isAuthority(msg.sender)
+                && !accessControl.isScienceTech(msg.sender)
+        ) {
+            revert Unauthorized(msg.sender);
+        }
 
         proofs[fileHash].revoked = true;
         emit DocumentRevoked(fileHash, msg.sender, block.timestamp);
