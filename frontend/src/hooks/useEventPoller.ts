@@ -23,7 +23,9 @@ export function useEventPoller({
   const lastBlockRef = useRef(0n);
   const isFirstRef = useRef(true);
   const onLogsRef = useRef(onLogs);
-  onLogsRef.current = onLogs;
+  useEffect(() => {
+    onLogsRef.current = onLogs;
+  }, [onLogs]);
 
   useEffect(() => {
     if (!enabled || !client) return;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAccount, useReadContracts } from 'wagmi';
 import { QRCodeSVG } from 'qrcode.react';
 import ProtectedRoute from '../components/ProtectedRoute';
+import CitizenLayout from '../components/CitizenLayout';
 import { useContracts, DEGREE_ABI } from '../hooks/useContract';
 import { shortenAddress, formatTimestamp } from '../utils/hash';
 
@@ -252,7 +253,9 @@ function WalletPage() {
 export default function ProtectedWalletPage() {
   return (
     <ProtectedRoute requiredRole="any">
-      <WalletPage />
+      <CitizenLayout>
+        <WalletPage />
+      </CitizenLayout>
     </ProtectedRoute>
   );
 }

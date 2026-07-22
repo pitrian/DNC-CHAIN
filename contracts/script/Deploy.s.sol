@@ -38,13 +38,16 @@ contract DeployScript is Script {
 contract DeployLocalScript is Script {
     function run() external {
         address deployer = msg.sender;
+        uint256 issuerKey = 0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d;
+        address issuer = vm.addr(issuerKey);
 
         vm.startBroadcast();
 
         DNCAccessControl accessControl = new DNCAccessControl(deployer);
 
-        accessControl.grantEducationRole(deployer);
-        accessControl.grantScienceTechRole(deployer);
+        accessControl.grantEducationRole(issuer);
+        accessControl.grantScienceTechRole(issuer);
+        accessControl.grantAuthorityRole(issuer);
 
         DNCProofRegistry registry = new DNCProofRegistry(
             address(accessControl)
@@ -63,9 +66,9 @@ contract DeployLocalScript is Script {
         console.log("DNCProofRegistry:", address(registry));
         console.log("DNCUniversityDegree:", address(degree));
 
-        console.log("Roles granted to deployer:");
-        console.log("  DEFAULT_ADMIN_ROLE: true");
-        console.log("  EDUCATION_ROLE: true");
-        console.log("  SCIENCE_TECH_ROLE: true");
+        console.log("");
+        console.log("Account #0 (deployer): DEFAULT_ADMIN_ROLE");
+        console.log("Account #1 (issuer):   EDUCATION_ROLE + SCIENCE_TECH_ROLE + AUTHORITY_ROLE");
+        console.log("Account #2 (citizen):  no role");
     }
 }

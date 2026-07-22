@@ -4,6 +4,7 @@ import DegreeCard from '../components/DegreeCard';
 import ProofRegistryCard from '../components/ProofRegistryCard';
 import Analytics from '../components/Analytics';
 import ProtectedRoute from '../components/ProtectedRoute';
+import AdminLayout from '../components/AdminLayout';
 import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
 import {
@@ -361,7 +362,9 @@ function DashboardPage() {
 export default function ProtectedDashboardPage() {
   return (
     <ProtectedRoute requiredRole="admin">
-      <DashboardPage />
+      <AdminLayout>
+        <DashboardPage />
+      </AdminLayout>
     </ProtectedRoute>
   );
 }

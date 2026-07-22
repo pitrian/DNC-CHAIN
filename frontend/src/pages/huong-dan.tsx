@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion, useMotionValue, useMotionTemplate } from 'framer-motion';
+import PublicLayout from '../components/PublicLayout';
 
 function DarkBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -188,7 +189,7 @@ const features = [
   { icon: '📊', title: 'System Governance', desc: 'Giám sát blockchain, RBAC, thống kê & phân tích, quản lý phân quyền.', accent: 'amber' as AccentColor },
 ];
 
-export default function HuongDanPage() {
+function HuongDanPage() {
   return (
     <div className="relative min-h-screen bg-slate-950 text-slate-200">
       <DarkBackground />
@@ -362,5 +363,13 @@ export default function HuongDanPage() {
         </motion.div>
       </div>
     </div>
+  );
+}
+
+export default function HuongDanPageWrapper() {
+  return (
+    <PublicLayout>
+      <HuongDanPage />
+    </PublicLayout>
   );
 }

@@ -3,6 +3,7 @@ import { useAccount } from 'wagmi';
 import { useWaitForTransactionReceipt } from 'wagmi';
 import FileUploader from '../components/FileUploader';
 import ProtectedRoute from '../components/ProtectedRoute';
+import IssuerLayout from '../components/IssuerLayout';
 import { useIsAuthority, useIsEducation, useIsScienceTech, useProofRegistry, useDegreeContract } from '../hooks/useContract';
 
 function BatchIssuance() {
@@ -50,10 +51,8 @@ function BatchIssuance() {
     }
   }, [isConfirmed, batchStatus.running]);
 
-  const parseAddresses = (text: string) => {
-    const lines = text.split('\n').map(l => l.trim()).filter(l => l.startsWith('0x') && l.length === 42);
-    setAddresses(lines);
-    return lines;
+  const getAddresses = (text: string) => {
+    return text.split('\n').map(l => l.trim()).filter(l => l.startsWith('0x') && l.length === 42);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,13 +62,14 @@ function BatchIssuance() {
     reader.onload = (evt) => {
       const text = evt.target?.result as string;
       setInput(text);
-      parseAddresses(text);
+      setAddresses(getAddresses(text));
     };
     reader.readAsText(file);
   };
 
   const handleStartBatch = () => {
-    const parsed = parseAddresses(input);
+    const parsed = getAddresses(input);
+    setAddresses(parsed);
     if (!parsed.length) {
       setStatus({ type: 'error', message: '❌ Không tìm thấy địa chỉ hợp lệ nào' });
       return;
@@ -79,7 +79,7 @@ function BatchIssuance() {
     setStatus({ type: 'info', message: `🚀 Bắt đầu batch mint ${parsed.length} văn bằng...` });
   };
 
-  const preview = parseAddresses(input);
+  const preview = getAddresses(input);
 
   return (
     <div className="card border-2 border-blue-200 bg-blue-50/50 mt-6">
@@ -104,7 +104,7 @@ function BatchIssuance() {
           📁 Upload CSV
           <input type="file" accept=".csv,.txt" onChange={handleFileUpload} className="hidden" />
         </label>
-        <span className="text-xs text-gray-500">CSV với cột "address" hoặc TXT mỗi dòng một địa chỉ</span>
+        <span className="text-xs text-gray-500">CSV với cột &quot;address&quot; hoặc TXT mỗi dòng một địa chỉ</span>
       </div>
 
       {preview.length > 0 && (
@@ -376,7 +376,9 @@ function IssuerPage() {
 export default function ProtectedIssuerPage() {
   return (
     <ProtectedRoute requiredRole="issuer">
-      <IssuerPage />
+      <IssuerLayout>
+        <IssuerPage />
+      </IssuerLayout>
     </ProtectedRoute>
   );
 }

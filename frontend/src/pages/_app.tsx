@@ -12,8 +12,8 @@ import {
   metaMaskWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
+import { Toaster } from 'react-hot-toast';
 import '@rainbow-me/rainbowkit/styles.css';
-import Layout from '../components/Layout';
 import '../styles/globals.css';
 
 const anvilLocal = /*#__PURE__*/ defineChain({
@@ -56,9 +56,24 @@ export default function App({ Component, pageProps }: AppProps) {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
-          <Layout>
-            <Component {...pageProps} />
-          </Layout>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#1e293b',
+                color: '#f1f5f9',
+                border: '1px solid #334155',
+              },
+              error: {
+                iconTheme: { primary: '#ef4444', secondary: '#1e293b' },
+              },
+              success: {
+                iconTheme: { primary: '#22c55e', secondary: '#1e293b' },
+              },
+            }}
+          />
+          <Component {...pageProps} />
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

@@ -1,4 +1,5 @@
 import React from 'react';
+import PublicLayout from '../components/PublicLayout';
 
 const legalBases = [
   { id: 'NQ 57', title: 'Nghị quyết 57-NQ/TW (2024)', desc: 'về đột phá KHCN, ĐMST & CĐS quốc gia' },
@@ -61,7 +62,7 @@ const riskGroups = [
   { label: 'Vận hành', icon: '⚙️', items: 'Nguồn lực, nhân sự, tổ chức thực hiện trong từng giai đoạn triển khai' },
 ];
 
-export default function DeAnPage() {
+function DeAnPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
@@ -377,5 +378,13 @@ export default function DeAnPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function DeAnPageWrapper() {
+  return (
+    <PublicLayout>
+      <DeAnPage />
+    </PublicLayout>
   );
 }

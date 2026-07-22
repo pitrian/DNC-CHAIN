@@ -1,141 +1,185 @@
-import React from 'react';
-import Link from 'next/link';
+import React, { useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
+import { useAccount } from 'wagmi';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import toast from 'react-hot-toast';
 import HeroSection from '../components/HeroSection';
+import PublicLayout from '../components/PublicLayout';
+import {
+  useIsAdmin,
+  useIsEducation,
+  useIsScienceTech,
+  useIsAuthority,
+} from '../hooks/useContract';
+
+const portals = [
+  {
+    id: 'citizen',
+    title: 'Cổng Công Dân',
+    subtitle: 'Tra cứu & xác thực văn bằng',
+    icon: '🔍',
+    bg: 'from-blue-600 to-blue-800',
+    badge: 'Không yêu cầu vai trò đặc biệt',
+    description:
+      'Tra cứu văn bằng, chứng chỉ trên DNC-Chain. Xem và quản lý bộ sưu tập SBT của bạn.',
+    features: ['Xác thực văn bằng không cần kết nối ví', 'Xem ví SBT cá nhân', 'Chia sẻ mã QR kiểm chứng'],
+  },
+  {
+    id: 'issuer',
+    title: 'Cổng Cán Bộ',
+    subtitle: 'Cấp phát & đăng ký hồ sơ',
+    icon: '🎓',
+    bg: 'from-emerald-600 to-emerald-800',
+    badge: 'Yêu cầu EDUCATION_ROLE / SCIENCE_TECH_ROLE',
+    description:
+      'Dành cho cán bộ Sở GD&ĐT và Sở KH&CN. Cấp văn bằng số và đăng ký hồ sơ lên blockchain.',
+    features: ['Cấp văn bằng SBT cho sinh viên', 'Đăng ký hồ sơ điện tử', 'Phát hành hàng loạt (batch)'],
+  },
+  {
+    id: 'admin',
+    title: 'Cổng Quản Trị',
+    subtitle: 'Giám sát & điều hành hệ thống',
+    icon: '⚙️',
+    bg: 'from-purple-600 to-purple-800',
+    badge: 'Yêu cầu DEFAULT_ADMIN_ROLE',
+    description:
+      'Dành cho quản trị viên hệ thống. Giám sát on-chain, phân quyền RBAC, và quản lý khẩn cấp.',
+    features: ['Phân quyền RBAC', 'Emergency Stop (Circuit Breaker)', 'Dashboard phân tích & thống kê'],
+  },
+];
 
 export default function Home() {
+  const router = useRouter();
+  const { address, isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+  const { isAdmin } = useIsAdmin(address);
+  const { isEducation } = useIsEducation(address);
+  const { isScienceTech } = useIsScienceTech(address);
+  const { isAuthority } = useIsAuthority(address);
+
+  const pendingNavRef = useRef<string | null>(null);
+
+  const canIssue = isEducation || isScienceTech || isAuthority;
+
+  useEffect(() => {
+    if (isConnected && pendingNavRef.current) {
+      const nav = pendingNavRef.current;
+      pendingNavRef.current = null;
+      router.push(nav);
+    }
+  }, [isConnected, router]);
+
+  const handlePortalClick = (portalId: string) => {
+    if (portalId === 'citizen') {
+      if (!isConnected) {
+        pendingNavRef.current = '/wallet';
+        openConnectModal?.();
+        return;
+      }
+      router.push('/wallet');
+      return;
+    }
+
+    if (portalId === 'issuer') {
+      if (!isConnected) {
+        pendingNavRef.current = '/issuer';
+        openConnectModal?.();
+        return;
+      }
+      if (canIssue) {
+        router.push('/issuer');
+      } else {
+        toast.error(
+          'Ví của bạn không có quyền truy cập Cổng Cán Bộ. Yêu cầu EDUCATION_ROLE hoặc SCIENCE_TECH_ROLE.'
+        );
+      }
+      return;
+    }
+
+    if (portalId === 'admin') {
+      if (!isConnected) {
+        pendingNavRef.current = '/dashboard';
+        openConnectModal?.();
+        return;
+      }
+      if (isAdmin) {
+        router.push('/dashboard');
+      } else {
+        toast.error(
+          'Ví của bạn không có quyền truy cập Cổng Quản Trị. Yêu cầu DEFAULT_ADMIN_ROLE.'
+        );
+      }
+      return;
+    }
+  };
+
   return (
-    <>
+    <PublicLayout>
       <HeroSection />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          <Link
-            href="/issuer"
-            className="card hover:shadow-md transition-shadow group"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-dnc-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-dnc-blue-900">
-                  Issuing Authority Portal
-                </h3>
-                <p className="text-sm text-gray-600">
-                  For authorized entities to mint SBT degrees & register document proofs
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/verifier"
-            className="card hover:shadow-md transition-shadow group"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-dnc-blue-900">
-                  Trust Verification Hub
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Tra cứu & xác thực văn bằng — không cần kết nối ví, không lưu PII
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/de-an"
-            className="card hover:shadow-md transition-shadow group"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-amber-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-dnc-blue-900">
-                  Đề án Blockchain
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Toàn cảnh Đề án 2728/QĐ-UBND về blockchain tại TP Đà Nẵng
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/huong-dan"
-            className="card hover:shadow-md transition-shadow group"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-teal-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-dnc-blue-900">
-                  Hướng dẫn
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Cách sử dụng DNC-CertiTrust — cho công dân, cơ quan & quản trị viên
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/wallet"
-            className="card hover:shadow-md transition-shadow group"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-dnc-blue-900">
-                  Citizen Digital Passport
-                </h3>
-                <p className="text-sm text-gray-600">
-                  SBT Wallet — quản lý văn bằng, chứng chỉ số trên DNC-Chain
-                </p>
-              </div>
-            </div>
-          </Link>
-
-          <Link
-            href="/dashboard"
-            className="card hover:shadow-md transition-shadow group"
-          >
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold text-dnc-blue-900">
-                  System Governance
-                </h3>
-                <p className="text-sm text-gray-600">
-                  Giám sát blockchain, RBAC, thống kê & quản lý phân quyền
-                </p>
-              </div>
-            </div>
-          </Link>
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl font-bold text-dnc-blue-900 mb-3">
+            Chọn Cổng thông tin
+          </h2>
+          <p className="text-gray-500 max-w-2xl mx-auto">
+            DNC-CertiTrust cung cấp ba cổng thông tin độc lập dành cho công dân, cán bộ và quản trị viên.
+            Mỗi cổng có giao diện và quyền truy cập riêng biệt.
+          </p>
         </div>
-      </div>
-    </>
+
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {portals.map((portal) => (
+            <button
+              key={portal.id}
+              onClick={() => handlePortalClick(portal.id)}
+              className="group text-left"
+            >
+              <div className="card h-full hover:shadow-xl transition-all duration-300 overflow-hidden relative">
+                <div className={`absolute top-0 left-0 right-0 h-2 bg-gradient-to-r ${portal.bg}`} />
+
+                <div className="pt-6 pb-4">
+                  <div
+                    className={`w-16 h-16 bg-gradient-to-br ${portal.bg} rounded-2xl flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition-transform`}
+                  >
+                    {portal.icon}
+                  </div>
+
+                  <h3 className="text-xl font-bold text-dnc-blue-900 mb-1">
+                    {portal.title}
+                  </h3>
+                  <p className="text-sm font-medium text-gray-500 mb-3">
+                    {portal.subtitle}
+                  </p>
+
+                  <span className="inline-block text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 mb-4">
+                    {portal.badge}
+                  </span>
+
+                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                    {portal.description}
+                  </p>
+
+                  <ul className="space-y-1.5">
+                    {portal.features.map((f, i) => (
+                      <li key={i} className="text-xs text-gray-500 flex items-center space-x-2">
+                        <span className="text-blue-500">✓</span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="border-t border-gray-100 pt-4 mt-2">
+                  <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
+                    Vào cổng →
+                  </span>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </section>
+    </PublicLayout>
   );
 }

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import FileUploader from '../components/FileUploader';
 import { useProofData } from '../hooks/useContract';
 import { formatTimestamp, shortenAddress } from '../utils/hash';
+import PublicLayout from '../components/PublicLayout';
 
-export default function VerifierPage() {
+function VerifierPage() {
   const [currentHash, setCurrentHash] = useState<`0x${string}` | undefined>();
   const [manualHash, setManualHash] = useState('');
   const { proof, isLoading } = useProofData(currentHash);
@@ -186,5 +187,13 @@ export default function VerifierPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function VerifierPageWrapper() {
+  return (
+    <PublicLayout>
+      <VerifierPage />
+    </PublicLayout>
   );
 }
