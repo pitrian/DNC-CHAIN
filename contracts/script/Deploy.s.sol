@@ -45,6 +45,10 @@ contract DeployLocalScript is Script {
 
         DNCAccessControl accessControl = new DNCAccessControl(deployer);
 
+        accessControl.grantEducationRole(deployer);
+        accessControl.grantScienceTechRole(deployer);
+        accessControl.grantAuthorityRole(deployer);
+
         accessControl.grantEducationRole(issuer);
         accessControl.grantScienceTechRole(issuer);
         accessControl.grantAuthorityRole(issuer);
@@ -67,7 +71,7 @@ contract DeployLocalScript is Script {
         console.log("DNCUniversityDegree:", address(degree));
 
         console.log("");
-        console.log("Account #0 (deployer): DEFAULT_ADMIN_ROLE");
+        console.log("Account #0 (deployer): DEFAULT_ADMIN_ROLE + EDUCATION_ROLE + SCIENCE_TECH_ROLE + AUTHORITY_ROLE");
         console.log("Account #1 (issuer):   EDUCATION_ROLE + SCIENCE_TECH_ROLE + AUTHORITY_ROLE");
         console.log("Account #2 (citizen):  no role");
     }
