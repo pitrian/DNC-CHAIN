@@ -82,12 +82,12 @@ function BatchIssuance() {
   const preview = getAddresses(input);
 
   return (
-    <div className="card border-2 border-blue-200 bg-blue-50/50 mt-6">
+    <div className="card border-2 border-emerald-500/20 mt-6 glow-emerald">
       <div className="flex items-center space-x-2 mb-4">
-        <div className="w-3 h-3 bg-blue-500 rounded-full" />
-        <h3 className="font-semibold text-dnc-blue-900">Batch Issuance · Hàng loạt</h3>
+        <div className="w-3 h-3 bg-emerald-500 rounded-full" />
+        <h3 className="font-semibold text-slate-100">Batch Issuance · Hàng loạt</h3>
       </div>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-slate-400 mb-4">
         Dán danh sách địa chỉ (mỗi dòng một địa chỉ) hoặc upload file CSV để cấp văn bằng hàng loạt.
       </p>
 
@@ -100,24 +100,24 @@ function BatchIssuance() {
       />
 
       <div className="flex items-center space-x-3 mb-4">
-        <label className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-300 transition-colors">
+        <label className="px-3 py-2 bg-slate-700 text-slate-300 rounded-lg text-sm font-medium cursor-pointer hover:bg-slate-600 transition-colors">
           📁 Upload CSV
           <input type="file" accept=".csv,.txt" onChange={handleFileUpload} className="hidden" />
         </label>
-        <span className="text-xs text-gray-500">CSV với cột &quot;address&quot; hoặc TXT mỗi dòng một địa chỉ</span>
+        <span className="text-xs text-slate-500">CSV với cột &quot;address&quot; hoặc TXT mỗi dòng một địa chỉ</span>
       </div>
 
       {preview.length > 0 && (
-        <div className="mb-4 p-3 bg-white/60 rounded-lg">
-          <p className="text-sm font-medium text-gray-700 mb-2">
+        <div className="mb-4 p-3 bg-slate-800/60 rounded-lg">
+          <p className="text-sm font-medium text-slate-300 mb-2">
             Tìm thấy {preview.length} địa chỉ:
           </p>
           <div className="max-h-24 overflow-y-auto space-y-1">
             {preview.slice(0, 20).map((addr, i) => (
-              <div key={i} className="text-xs font-mono text-gray-600">{addr}</div>
+              <div key={i} className="text-xs font-mono text-slate-400">{addr}</div>
             ))}
             {preview.length > 20 && (
-              <div className="text-xs text-gray-400">...và {preview.length - 20} địa chỉ khác</div>
+              <div className="text-xs text-slate-500">...và {preview.length - 20} địa chỉ khác</div>
             )}
           </div>
         </div>
@@ -126,16 +126,16 @@ function BatchIssuance() {
       {batchStatus.running && (
         <div className="mb-4">
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-gray-600">Tiến độ:</span>
-            <span className="font-medium text-dnc-blue-900">{batchStatus.completed + batchStatus.failed} / {batchStatus.total}</span>
+            <span className="text-slate-400">Tiến độ:</span>
+            <span className="font-medium text-slate-100">{batchStatus.completed + batchStatus.failed} / {batchStatus.total}</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-slate-700 rounded-full h-2">
             <div
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${((batchStatus.completed + batchStatus.failed) / batchStatus.total) * 100}%` }}
             />
           </div>
-          <div className="flex space-x-4 mt-1 text-xs text-gray-500">
+          <div className="flex space-x-4 mt-1 text-xs text-slate-500">
             <span>✅ {batchStatus.completed}</span>
             <span>❌ {batchStatus.failed}</span>
           </div>
@@ -152,9 +152,9 @@ function BatchIssuance() {
 
       {status && (
         <div className={`mt-3 p-3 rounded-lg text-sm ${
-          status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
-            : status.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
-            : 'bg-blue-50 text-blue-800 border border-blue-200'
+          status.type === 'success' ? 'bg-green-500/10 text-green-300 border border-green-500/20'
+            : status.type === 'error' ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+            : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
         }`}>
           {status.message}
         </div>
@@ -262,26 +262,26 @@ function IssuerPage() {
         <>
           {!isAllowed ? (
             <div className="card text-center py-8">
-              <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m0 0v2m0-2h2m-2 0H10m9.364-7.364A9 9 0 1112 3a9 9 0 017.364 4.636z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-dnc-blue-900 mb-2">
+              <h3 className="text-lg font-semibold text-slate-100 mb-2">
                 Không có quyền truy cập
               </h3>
-              <p className="text-gray-600">
+              <p className="text-slate-400">
                 Ví của bạn chưa được cấp quyền. Vui lòng liên hệ quản trị viên (DEFAULT_ADMIN).
               </p>
-              <div className="mt-3 text-xs text-gray-400 space-y-1">
+              <div className="mt-3 text-xs text-slate-500 space-y-1">
                 <p>• <strong>EDUCATION_ROLE</strong>: Cấp văn bằng (Sở GD&ĐT)</p>
                 <p>• <strong>SCIENCE_TECH_ROLE</strong>: Đăng ký hồ sơ (Sở KH&CN)</p>
               </div>
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="card">
-                <h3 className="font-semibold text-dnc-blue-900 mb-4">
+              <div className="card glow-emerald">
+                <h3 className="font-semibold text-slate-100 mb-4">
                   {isEducation && isScienceTech
                     ? 'Có quyền: Sở GD&ĐT + Sở KH&CN'
                     : isEducation
@@ -297,8 +297,8 @@ function IssuerPage() {
                       onClick={() => setMode('degree')}
                       className={`flex-1 py-3 rounded-lg font-medium text-sm transition-colors ${
                         mode === 'degree'
-                          ? 'bg-dnc-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                       }`}
                     >
                       🎓 Cấp văn bằng
@@ -309,8 +309,8 @@ function IssuerPage() {
                       onClick={() => setMode('proof')}
                       className={`flex-1 py-3 rounded-lg font-medium text-sm transition-colors ${
                         mode === 'proof'
-                          ? 'bg-dnc-blue-600 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
                       }`}
                     >
                       📄 Đăng ký hồ sơ
@@ -320,7 +320,7 @@ function IssuerPage() {
 
                 {mode === 'degree' && (
                   <div className="mb-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-slate-300 mb-2">
                       Recipient Address
                     </label>
                     <input
@@ -345,10 +345,10 @@ function IssuerPage() {
                 <div
                   className={`p-4 rounded-lg text-sm ${
                     status.type === 'success'
-                      ? 'bg-green-50 text-green-800 border border-green-200'
+                      ? 'bg-green-500/10 text-green-300 border border-green-500/20'
                       : status.type === 'error'
-                      ? 'bg-red-50 text-red-800 border border-red-200'
-                      : 'bg-blue-50 text-blue-800 border border-blue-200'
+                      ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+                      : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
                   }`}
                 >
                   {status.message}
@@ -361,10 +361,10 @@ function IssuerPage() {
 
       {!isConnected && (
         <div className="card text-center py-12">
-          <p className="text-gray-500 mb-4">
+          <p className="text-slate-400 mb-4">
             Connect your wallet to access the Issuer Portal.
           </p>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-slate-500">
             Only authorized government wallets (AUTHORITY role) can mint diplomas.
           </p>
         </div>
@@ -375,10 +375,10 @@ function IssuerPage() {
 
 export default function ProtectedIssuerPage() {
   return (
-    <ProtectedRoute requiredRole="issuer">
-      <IssuerLayout>
+    <IssuerLayout>
+      <ProtectedRoute requiredRole="issuer">
         <IssuerPage />
-      </IssuerLayout>
-    </ProtectedRoute>
+      </ProtectedRoute>
+    </IssuerLayout>
   );
 }

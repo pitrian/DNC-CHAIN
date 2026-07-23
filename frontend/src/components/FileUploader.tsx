@@ -90,8 +90,8 @@ export default function FileUploader({
         onClick={handleClick}
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
           dragOver
-            ? 'border-dnc-blue-500 bg-dnc-blue-50'
-            : 'border-gray-300 hover:border-dnc-blue-400 hover:bg-gray-50'
+            ? 'border-dnc-blue-500 bg-blue-500/10'
+            : 'border-slate-700 hover:border-dnc-blue-400 hover:bg-slate-800/60'
         }`}
       >
         <input
@@ -120,12 +120,12 @@ export default function FileUploader({
               />
             </svg>
           </div>
-          <p className="text-gray-600">
+          <p className="text-slate-300">
             {dragOver
               ? 'Drop file here'
               : 'Drag & drop or click to upload'}
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-slate-400">
             Supports PDF, PNG, JPEG (max 10MB)
           </p>
         </div>
@@ -133,24 +133,24 @@ export default function FileUploader({
 
       {selectedFile && (
         <div className="card space-y-3">
-          <h4 className="font-medium text-dnc-blue-900">File Details</h4>
+          <h4 className="font-medium text-slate-100">File Details</h4>
           <div className="grid grid-cols-2 gap-2 text-sm">
-            <span className="text-gray-500">Name:</span>
-            <span className="text-gray-800 font-medium truncate">
+            <span className="text-slate-400">Name:</span>
+            <span className="text-slate-200 font-medium truncate">
               {selectedFile.name}
             </span>
-            <span className="text-gray-500">Size:</span>
-            <span className="text-gray-800 font-medium">
+            <span className="text-slate-400">Size:</span>
+            <span className="text-slate-200 font-medium">
               {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
             </span>
-            <span className="text-gray-500">Type:</span>
-            <span className="text-gray-800 font-medium">
+            <span className="text-slate-400">Type:</span>
+            <span className="text-slate-200 font-medium">
               {selectedFile.type}
             </span>
             {computedHash && (
               <>
-                <span className="text-gray-500">SHA-256:</span>
-                <span className="text-gray-800 font-mono text-xs break-all">
+                <span className="text-slate-400">SHA-256:</span>
+                <span className="text-slate-200 font-mono text-xs break-all">
                   {truncateHash(computedHash)}
                 </span>
               </>
@@ -158,7 +158,7 @@ export default function FileUploader({
           </div>
 
           {(isHashing || isUploading) && (
-            <div className="flex items-center space-x-2 text-sm text-dnc-blue-600">
+            <div className="flex items-center space-x-2 text-sm text-blue-400">
               <svg
                 className="animate-spin h-4 w-4"
                 viewBox="0 0 24 24"

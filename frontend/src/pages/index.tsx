@@ -118,17 +118,17 @@ export default function Home() {
       <HeroSection />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold text-dnc-blue-900 mb-3">
+        <div className="text-center mb-12 animate-fade-in-up">
+          <h2 className="text-2xl font-bold text-slate-100 mb-3">
             Chọn Cổng thông tin
           </h2>
-          <p className="text-gray-500 max-w-2xl mx-auto">
+          <p className="text-slate-400 max-w-2xl mx-auto">
             DNC-CertiTrust cung cấp ba cổng thông tin độc lập dành cho công dân, cán bộ và quản trị viên.
             Mỗi cổng có giao diện và quyền truy cập riêng biệt.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto animate-fade-in-up stagger-3">
           {portals.map((portal) => (
             <button
               key={portal.id}
@@ -145,24 +145,24 @@ export default function Home() {
                     {portal.icon}
                   </div>
 
-                  <h3 className="text-xl font-bold text-dnc-blue-900 mb-1">
+                  <h3 className="text-xl font-bold text-slate-100 mb-1">
                     {portal.title}
                   </h3>
-                  <p className="text-sm font-medium text-gray-500 mb-3">
+                  <p className="text-sm font-medium text-slate-400 mb-3">
                     {portal.subtitle}
                   </p>
 
-                  <span className="inline-block text-xs font-medium px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 border border-slate-200 mb-4">
+                  <span className="inline-block text-xs font-medium px-2.5 py-1 rounded-full bg-slate-800/60 text-slate-300 border border-slate-700/50 mb-4">
                     {portal.badge}
                   </span>
 
-                  <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+                  <p className="text-sm text-slate-400 mb-4 leading-relaxed">
                     {portal.description}
                   </p>
 
                   <ul className="space-y-1.5">
                     {portal.features.map((f, i) => (
-                      <li key={i} className="text-xs text-gray-500 flex items-center space-x-2">
+                      <li key={i} className="text-xs text-slate-400 flex items-center space-x-2">
                         <span className="text-blue-500">✓</span>
                         <span>{f}</span>
                       </li>
@@ -170,8 +170,8 @@ export default function Home() {
                   </ul>
                 </div>
 
-                <div className="border-t border-gray-100 pt-4 mt-2">
-                  <span className="text-sm font-medium text-blue-600 group-hover:text-blue-700 transition-colors">
+                <div className="border-t border-slate-700/50 pt-4 mt-2">
+                  <span className="text-sm font-medium text-blue-400 group-hover:text-blue-300 transition-colors">
                     Vào cổng →
                   </span>
                 </div>

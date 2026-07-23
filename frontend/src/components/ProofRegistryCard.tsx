@@ -90,11 +90,11 @@ export default function ProofRegistryCard() {
     <div className="card space-y-6">
       <div className="flex items-center space-x-2">
         <div className="w-3 h-3 bg-emerald-500 rounded-full" />
-        <h3 className="font-semibold text-dnc-blue-900">Proof Registry</h3>
+        <h3 className="font-semibold text-slate-100">Proof Registry</h3>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-300 mb-2">
           Lookup Proof by File Hash
         </label>
         <div className="flex space-x-2">
@@ -115,19 +115,19 @@ export default function ProofRegistryCard() {
           </button>
         </div>
         {activeLookup && (
-          <div className="mt-3 p-3 bg-gray-50 rounded-lg text-sm">
+          <div className="mt-3 p-3 bg-slate-800/60 rounded-lg text-sm">
             {isLoading ? (
-              <p className="text-gray-500">Loading...</p>
+              <p className="text-slate-400">Loading...</p>
             ) : error ? (
-              <p className="text-red-600 font-medium">Proof not found or not registered</p>
+              <p className="text-red-400 font-medium">Proof not found or not registered</p>
             ) : proof ? (
               <div className="space-y-1 font-mono text-xs">
-                <p><span className="text-gray-500">Hash:</span> {truncateHash(proof.fileHash, 16)}</p>
-                <p><span className="text-gray-500">Issuer:</span> {shortenAddress(proof.issuer)}</p>
-                <p><span className="text-gray-500">Time:</span> {formatTimestamp(proof.timestamp)}</p>
+                <p><span className="text-slate-400">Hash:</span> <span className="text-slate-200">{truncateHash(proof.fileHash, 16)}</span></p>
+                <p><span className="text-slate-400">Issuer:</span> <span className="text-slate-200">{shortenAddress(proof.issuer)}</span></p>
+                <p><span className="text-slate-400">Time:</span> <span className="text-slate-200">{formatTimestamp(proof.timestamp)}</span></p>
                 <p>
-                  <span className="text-gray-500">Status:</span>{' '}
-                  <span className={proof.revoked ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}>
+                  <span className="text-slate-400">Status:</span>{' '}
+                  <span className={proof.revoked ? 'text-red-400 font-medium' : 'text-green-400 font-medium'}>
                     {proof.revoked ? 'Revoked' : 'Valid'}
                   </span>
                 </p>
@@ -138,26 +138,26 @@ export default function ProofRegistryCard() {
       </div>
 
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-2">
+        <h4 className="text-sm font-medium text-slate-300 mb-2">
           Recent Registrations ({proofs.length})
         </h4>
         {proofs.length === 0 ? (
-          <p className="text-gray-400 text-sm py-4 text-center">No proofs registered yet.</p>
+          <p className="text-slate-400 text-sm py-4 text-center">No proofs registered yet.</p>
         ) : (
           <div className="space-y-1 max-h-48 overflow-y-auto">
             {proofs.map((p, i) => {
               const v = latestVerified(p.fileHash);
               return (
-                <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-xs">
+                <div key={i} className="flex items-center justify-between p-2 bg-slate-800/60 rounded-lg text-xs">
                   <div className="flex-1 min-w-0 mr-2">
-                    <p className="font-mono text-gray-600 truncate">{truncateHash(p.fileHash, 10)}</p>
-                    <p className="text-gray-400">by {shortenAddress(p.issuer)}</p>
+                    <p className="font-mono text-slate-300 truncate">{truncateHash(p.fileHash, 10)}</p>
+                    <p className="text-slate-500">by {shortenAddress(p.issuer)}</p>
                   </div>
                   <div className="flex items-center space-x-2 shrink-0">
-                    <span className="text-gray-400">{formatTimestamp(p.timestamp)}</span>
+                    <span className="text-slate-500">{formatTimestamp(p.timestamp)}</span>
                     {v && (
                       <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                        v.valid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                        v.valid ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
                       }`}>
                         {v.valid ? 'Valid' : 'Invalid'}
                       </span>
@@ -172,18 +172,18 @@ export default function ProofRegistryCard() {
 
       {verifiedEvents.length > 0 && (
         <div>
-          <h4 className="text-sm font-medium text-gray-700 mb-2">
+          <h4 className="text-sm font-medium text-slate-300 mb-2">
             Recent Verifications ({verifiedEvents.length})
           </h4>
           <div className="space-y-1 max-h-32 overflow-y-auto">
             {verifiedEvents.slice(0, 10).map((v, i) => (
-              <div key={i} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg text-xs">
+              <div key={i} className="flex items-center justify-between p-2 bg-slate-800/60 rounded-lg text-xs">
                 <div className="flex-1 min-w-0 mr-2">
-                  <p className="font-mono text-gray-600 truncate">{truncateHash(v.fileHash, 10)}</p>
-                  <p className="text-gray-400">by {shortenAddress(v.verifier)}</p>
+                  <p className="font-mono text-slate-300 truncate">{truncateHash(v.fileHash, 10)}</p>
+                  <p className="text-slate-500">by {shortenAddress(v.verifier)}</p>
                 </div>
                 <span className={`shrink-0 px-2 py-0.5 rounded text-xs font-medium ${
-                  v.valid ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+                  v.valid ? 'bg-green-500/20 text-green-300' : 'bg-red-500/20 text-red-300'
                 }`}>
                   {v.valid ? 'Valid' : 'Invalid'}
                 </span>

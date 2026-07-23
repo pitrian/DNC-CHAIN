@@ -51,14 +51,14 @@ export default function DegreeCard() {
     <div className="space-y-4">
       {address && userDegrees && userDegrees.length > 0 && (
         <div className="card">
-          <h3 className="font-semibold text-dnc-blue-900 mb-3">
+          <h3 className="font-semibold text-slate-100 mb-3">
             My Degrees ({userDegrees.length})
           </h3>
           <div className="flex flex-wrap gap-2">
             {userDegrees.map((tokenId) => (
               <span
                 key={tokenId.toString()}
-                className="inline-flex items-center px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium"
+                className="inline-flex items-center px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm font-medium"
               >
                 Degree #{tokenId.toString()}
               </span>
@@ -68,11 +68,11 @@ export default function DegreeCard() {
       )}
 
       <div className="card">
-        <h3 className="font-semibold text-dnc-blue-900 mb-3">
+        <h3 className="font-semibold text-slate-100 mb-3">
           Recent Minted Degrees
         </h3>
         {degrees.length === 0 ? (
-          <p className="text-gray-500 text-sm py-4 text-center">
+          <p className="text-slate-400 text-sm py-4 text-center">
             Waiting for new degrees...
           </p>
         ) : (
@@ -80,19 +80,19 @@ export default function DegreeCard() {
             {degrees.map((d, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-3 bg-gray-50 rounded-lg text-sm"
+                className="flex items-center justify-between p-3 bg-slate-800/60 rounded-lg text-sm"
               >
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-dnc-blue-100 rounded-full flex items-center justify-center">
-                    <span className="text-dnc-blue-600 font-bold text-xs">
+                  <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center">
+                    <span className="text-blue-400 font-bold text-xs">
                       #{d.tokenId.toString()}
                     </span>
                   </div>
                   <div>
-                    <p className="font-medium text-gray-800">
+                    <p className="font-medium text-slate-200">
                       To: {shortenAddress(d.recipient)}
                     </p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-slate-400">
                       By: {shortenAddress(d.issuer)} •{' '}
                       {formatTimestamp(d.timestamp)}
                     </p>

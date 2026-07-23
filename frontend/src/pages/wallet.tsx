@@ -81,14 +81,14 @@ function WalletPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 rounded-2xl mb-4">
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-500/10 rounded-2xl mb-4">
           <img src="/assets/logo.svg" alt="DNC" className="h-10" />
         </div>
         <h1 className="section-title">Citizen Digital Passport</h1>
         <p className="section-subtitle">
           Quản lý tập trung văn bằng, chứng chỉ số (Soulbound Tokens) của bạn trên DNC-Chain
         </p>
-        <div className="inline-flex items-center space-x-1.5 mt-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full">
+        <div className="inline-flex items-center space-x-1.5 mt-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-medium px-3 py-1.5 rounded-full">
           <span>🔒</span>
           <span>Zero PII On-Chain · SHA-256 Hash Anchor Only</span>
         </div>
@@ -96,21 +96,21 @@ function WalletPage() {
 
       {!isConnected && (
         <div className="card text-center py-12">
-          <p className="text-gray-500 mb-4">
+          <p className="text-slate-400 mb-4">
             Kết nối ví để xem văn bằng, chứng chỉ của bạn.
           </p>
         </div>
       )}
 
       {isConnected && (
-        <div className="grid lg:grid-cols-5 gap-6">
+        <div className="grid lg:grid-cols-5 gap-6 animate-fade-in-up stagger-1">
           <div className="lg:col-span-2 space-y-3">
-            <div className="card">
-              <h3 className="font-semibold text-dnc-blue-900 mb-3">
+            <div className="card glow-blue">
+              <h3 className="font-semibold text-slate-100 mb-3">
                 Văn bằng của tôi
               </h3>
               {tokenIds.length === 0 ? (
-                <p className="text-gray-400 text-sm py-4 text-center">
+                <p className="text-slate-400 text-sm py-4 text-center">
                   Chưa có văn bằng nào.
                 </p>
               ) : (
@@ -121,15 +121,15 @@ function WalletPage() {
                       onClick={() => setSelectedToken(d.tokenId)}
                       className={`w-full text-left p-3 rounded-lg text-sm transition-colors ${
                         selectedToken === d.tokenId
-                          ? 'bg-dnc-blue-50 border-2 border-dnc-blue-300'
-                          : 'bg-gray-50 hover:bg-gray-100 border-2 border-transparent'
+                          ? 'bg-blue-500/10 border-2 border-blue-500/30'
+                          : 'bg-slate-800/60 hover:bg-slate-700/60 border-2 border-transparent'
                       }`}
                     >
                       <div className="flex items-center justify-between">
-                        <span className="font-medium text-dnc-blue-900">
+                        <span className="font-medium text-slate-100">
                           #{d.tokenId.toString()}
                         </span>
-                        <span className="text-xs text-gray-400">
+                        <span className="text-xs text-slate-400">
                           {d.loading
                             ? '...'
                             : d.metadata
@@ -138,7 +138,7 @@ function WalletPage() {
                         </span>
                       </div>
                       {d.metadata && (
-                        <p className="text-xs text-gray-500 mt-0.5 truncate">
+                        <p className="text-xs text-slate-400 mt-0.5 truncate">
                           {d.metadata.name || 'DNC University Diploma'}
                         </p>
                       )}
@@ -152,36 +152,36 @@ function WalletPage() {
           <div className="lg:col-span-3">
             {!selected && (
               <div className="card text-center py-16">
-                <p className="text-gray-400">
+                <p className="text-slate-400">
                   Chọn một văn bằng bên trái để xem chi tiết.
                 </p>
               </div>
             )}
 
             {selected && (
-              <div className="card">
+              <div className="card glow-blue">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-dnc-blue-900">
+                  <h3 className="font-semibold text-slate-100">
                     Degree #{selected.tokenId.toString()}
                   </h3>
                   <a
                     href={selected.uri}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-dnc-blue-600 hover:underline"
+                    className="text-xs text-blue-400 hover:underline"
                   >
                     Xem metadata
                   </a>
                 </div>
 
                 {selected.loading && (
-                  <div className="py-8 text-center text-gray-500 text-sm">
+                  <div className="py-8 text-center text-slate-400 text-sm">
                     Đang tải metadata...
                   </div>
                 )}
 
                 {!selected.loading && selected.metadata?.image && (
-                  <div className="mb-4 rounded-lg overflow-hidden border bg-gray-50 p-4 flex justify-center">
+                  <div className="mb-4 rounded-lg overflow-hidden border border-slate-700 bg-slate-800/60 p-4 flex justify-center">
                     <img
                       src={selected.metadata.image}
                       alt={selected.metadata.name || 'Diploma'}
@@ -191,22 +191,22 @@ function WalletPage() {
                 )}
 
                 {!selected.loading && selected.metadata && (
-                  <div className="space-y-2 text-sm border-t pt-4">
+                  <div className="space-y-2 text-sm border-t border-slate-700 pt-4">
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Tên:</span>
-                      <span className="font-medium text-gray-800">
+                      <span className="text-slate-400">Tên:</span>
+                      <span className="font-medium text-slate-200">
                         {selected.metadata.name || 'DNC University Diploma'}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Số hiệu:</span>
-                      <span className="font-mono text-gray-800">
+                      <span className="text-slate-400">Số hiệu:</span>
+                      <span className="font-mono text-slate-200">
                         #{selected.tokenId.toString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-500">Ví chủ:</span>
-                      <span className="font-mono text-gray-800">
+                      <span className="text-slate-400">Ví chủ:</span>
+                      <span className="font-mono text-slate-200">
                         {shortenAddress(address!)}
                       </span>
                     </div>
@@ -214,19 +214,19 @@ function WalletPage() {
                 )}
 
                 {!selected.loading && !selected.metadata && (
-                  <p className="text-gray-400 text-sm py-4 text-center">
+                  <p className="text-slate-400 text-sm py-4 text-center">
                     Không thể tải metadata.
                   </p>
                 )}
 
-                <div className="border-t mt-4 pt-4 flex items-center justify-center">
+                <div className="border-t border-slate-700 mt-4 pt-4 flex items-center justify-center">
                   <div className="text-center">
                     <QRCodeSVG
                       value={`${window.location.origin}/verifier?hash=${selected.uri.split('/').pop() || ''}`}
                       size={120}
                       level="M"
                     />
-                    <p className="text-xs text-gray-400 mt-2">
+                    <p className="text-xs text-slate-400 mt-2">
                       Quét để xác thực
                     </p>
                     <button
@@ -235,7 +235,7 @@ function WalletPage() {
                         navigator.clipboard.writeText(link);
                         alert('Đã sao chép link kiểm chứng!');
                       }}
-                      className="mt-2 text-xs text-dnc-blue-600 hover:underline"
+                      className="mt-2 text-xs text-blue-400 hover:underline"
                     >
                       📋 Sao chép link kiểm chứng
                     </button>
@@ -252,10 +252,10 @@ function WalletPage() {
 
 export default function ProtectedWalletPage() {
   return (
-    <ProtectedRoute requiredRole="any">
-      <CitizenLayout>
+    <CitizenLayout>
+      <ProtectedRoute requiredRole="any">
         <WalletPage />
-      </CitizenLayout>
-    </ProtectedRoute>
+      </ProtectedRoute>
+    </CitizenLayout>
   );
 }

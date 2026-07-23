@@ -131,9 +131,9 @@ export default function EventStream() {
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-dnc-blue-900">Event Stream</h3>
+        <h3 className="font-semibold text-slate-100">Event Stream</h3>
         <div className="flex items-center space-x-2">
-          <label className="flex items-center space-x-1 text-xs text-gray-500">
+          <label className="flex items-center space-x-1 text-xs text-slate-400">
             <input
               type="checkbox"
               checked={autoScroll}
@@ -153,7 +153,7 @@ export default function EventStream() {
             className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
               filter === f
                 ? 'bg-dnc-blue-600 text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
             }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -166,7 +166,7 @@ export default function EventStream() {
         className="space-y-1 max-h-96 overflow-y-auto"
       >
         {filtered.length === 0 ? (
-          <p className="text-gray-400 text-sm text-center py-8">
+          <p className="text-slate-400 text-sm text-center py-8">
             No events yet. Mint a degree or register a proof to see events.
           </p>
         ) : (
@@ -175,41 +175,41 @@ export default function EventStream() {
               key={i}
               className={`flex items-start space-x-3 p-2 border-l-4 ${getEventColor(
                 event.type
-              )} bg-gray-50 rounded-r-lg`}
+              )} bg-slate-800/60 rounded-r-lg`}
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2">
                   <span
                     className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
                       event.type === 'registered'
-                        ? 'bg-green-100 text-green-800'
+                        ? 'bg-green-500/20 text-green-300'
                         : event.type === 'verified'
-                        ? 'bg-blue-100 text-blue-800'
+                        ? 'bg-blue-500/20 text-blue-300'
                         : event.type === 'minted'
-                        ? 'bg-purple-100 text-purple-800'
-                        : 'bg-red-100 text-red-800'
+                        ? 'bg-purple-500/20 text-purple-300'
+                        : 'bg-red-500/20 text-red-300'
                     }`}
                   >
                     {getEventLabel(event.type)}
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-slate-400">
                     {formatTimestamp(BigInt(event.timestamp))}
                   </span>
                 </div>
-                <p className="text-xs text-gray-600 mt-1 font-mono">
+                <p className="text-xs text-slate-400 mt-1 font-mono">
                   {event.tokenId
                     ? `Degree #${event.tokenId.toString()}`
                     : truncateHash(event.hash)}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-slate-500">
                   {shortenAddress(event.actor)}
                   {event.valid !== undefined && (
                     <span
-                      className={
-                        event.valid
-                          ? 'text-green-600 ml-2'
-                          : 'text-red-600 ml-2'
-                      }
+                        className={
+                          event.valid
+                            ? 'text-green-400 ml-2'
+                            : 'text-red-400 ml-2'
+                        }
                     >
                       • {event.valid ? 'Valid' : 'Invalid'}
                     </span>

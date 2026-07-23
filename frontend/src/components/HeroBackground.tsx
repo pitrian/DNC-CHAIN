@@ -59,11 +59,11 @@ export default function HeroBackground() {
         className="absolute inset-0"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px)',
+            'linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)',
           backgroundSize: '60px 60px',
         }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-white/30 to-white/80" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/30 to-slate-950/80" />
     </div>
   );
 }

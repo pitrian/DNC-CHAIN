@@ -57,12 +57,12 @@ function AdminPanel() {
   ];
 
   return (
-    <div className="card border-2 border-amber-200 bg-amber-50/50">
+    <div className="card border-2 border-violet-500/20 glow-violet">
       <div className="flex items-center space-x-2 mb-4">
-        <div className="w-3 h-3 bg-amber-500 rounded-full" />
-        <h3 className="font-semibold text-dnc-blue-900">System Governance · RBAC Control</h3>
+        <div className="w-3 h-3 bg-violet-500 rounded-full" />
+        <h3 className="font-semibold text-slate-100">System Governance · RBAC Control</h3>
       </div>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-slate-400 mb-4">
         Quản lý vai trò cho các Sở ban ngành. Nhập địa chỉ ví sau đó chọn thao tác.
       </p>
       <div className="space-y-3">
@@ -75,8 +75,8 @@ function AdminPanel() {
         />
         <div className="space-y-2">
           {actions.map((a) => (
-            <div key={a.label} className="flex items-center justify-between p-2 bg-white/60 rounded-lg">
-              <span className="text-sm font-medium text-gray-700 min-w-[120px]">{a.label}</span>
+            <div key={a.label} className="flex items-center justify-between p-2 bg-slate-800/60 rounded-lg">
+              <span className="text-sm font-medium text-slate-300 min-w-[120px]">{a.label}</span>
               <div className="flex space-x-2">
                 <button
                   onClick={() => { const addr = validate(); if (addr) { setPending(`Cấp ${a.label}`); a.grant(addr); setStatus({ type: 'info', message: `⏳ Đang cấp ${a.label}...` }); } }}
@@ -99,10 +99,10 @@ function AdminPanel() {
         {status && (
           <div className={`p-3 rounded-lg text-sm ${
             status.type === 'success'
-              ? 'bg-green-50 text-green-800 border border-green-200'
+              ? 'bg-green-500/10 text-green-300 border border-green-500/20'
               : status.type === 'error'
-              ? 'bg-red-50 text-red-800 border border-red-200'
-              : 'bg-blue-50 text-blue-800 border border-blue-200'
+              ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+              : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
           }`}>
             {status.message}
           </div>
@@ -137,19 +137,19 @@ function EmergencyControl() {
   if (isLoading) return null;
 
   return (
-    <div className={`card border-2 ${isPaused ? 'border-red-300 bg-red-50/50' : 'border-green-200 bg-green-50/50'}`}>
+    <div className={`card border-2 ${isPaused ? 'border-red-500/30 bg-red-500/5' : 'border-green-500/20 bg-green-500/5'}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <div className={`w-3 h-3 rounded-full ${isPaused ? 'bg-red-500 animate-pulse' : 'bg-green-500'}`} />
-          <h3 className="font-semibold text-dnc-blue-900">Emergency Stop · Circuit Breaker</h3>
+          <h3 className="font-semibold text-slate-100">Emergency Stop · Circuit Breaker</h3>
         </div>
         <span className={`px-2 py-1 rounded text-xs font-bold ${
-          isPaused ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'
+          isPaused ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'
         }`}>
           {isPaused ? 'PAUSED' : 'ACTIVE'}
         </span>
       </div>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-slate-400 mb-4">
         {isPaused
           ? 'Hệ thống đang tạm dừng. Tất cả mint và register operations đã bị chặn.'
           : 'Hệ thống đang hoạt động bình thường.'}
@@ -172,9 +172,9 @@ function EmergencyControl() {
       </div>
       {status && (
         <div className={`mt-3 p-3 rounded-lg text-sm ${
-          status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
-            : status.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
-            : 'bg-blue-50 text-blue-800 border border-blue-200'
+          status.type === 'success' ? 'bg-green-500/10 text-green-300 border border-green-500/20'
+            : status.type === 'error' ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+            : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
         }`}>
           {status.message}
         </div>
@@ -231,12 +231,12 @@ function RevocationPanel() {
   };
 
   return (
-    <div className="card border-2 border-orange-200 bg-orange-50/50">
+    <div className="card border-2 border-orange-500/20">
       <div className="flex items-center space-x-2 mb-4">
         <div className="w-3 h-3 bg-orange-500 rounded-full" />
-        <h3 className="font-semibold text-dnc-blue-900">Revocation Management</h3>
+        <h3 className="font-semibold text-slate-100">Revocation Management</h3>
       </div>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-slate-400 mb-4">
         Thu hồi văn bằng (EDUCATION_ROLE) hoặc hồ sơ (SCIENCE_TECH_ROLE).
       </p>
 
@@ -244,7 +244,7 @@ function RevocationPanel() {
         <button
           onClick={() => setMode('degree')}
           className={`flex-1 py-2 rounded-lg font-medium text-sm transition-colors ${
-            mode === 'degree' ? 'bg-orange-600 text-white' : 'bg-white/60 text-gray-600 hover:bg-gray-100'
+            mode === 'degree' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
           }`}
         >
           🎓 Thu hồi văn bằng
@@ -252,7 +252,7 @@ function RevocationPanel() {
         <button
           onClick={() => setMode('proof')}
           className={`flex-1 py-2 rounded-lg font-medium text-sm transition-colors ${
-            mode === 'proof' ? 'bg-orange-600 text-white' : 'bg-white/60 text-gray-600 hover:bg-gray-100'
+            mode === 'proof' ? 'bg-orange-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
           }`}
         >
           📄 Thu hồi hồ sơ
@@ -260,7 +260,7 @@ function RevocationPanel() {
       </div>
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-slate-300 mb-2">
           {mode === 'degree' ? 'Token ID' : 'FileHash (0x...)'}
         </label>
         <input
@@ -282,9 +282,9 @@ function RevocationPanel() {
 
       {status && (
         <div className={`mt-3 p-3 rounded-lg text-sm ${
-          status.type === 'success' ? 'bg-green-50 text-green-800 border border-green-200'
-            : status.type === 'error' ? 'bg-red-50 text-red-800 border border-red-200'
-            : 'bg-blue-50 text-blue-800 border border-blue-200'
+          status.type === 'success' ? 'bg-green-500/10 text-green-300 border border-green-500/20'
+            : status.type === 'error' ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+            : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
         }`}>
           {status.message}
         </div>
@@ -301,8 +301,8 @@ function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-2xl mb-4">
-          <svg className="w-8 h-8 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-violet-500/10 rounded-2xl mb-4">
+          <svg className="w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
           </svg>
         </div>
@@ -312,7 +312,7 @@ function DashboardPage() {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid lg:grid-cols-2 gap-6 animate-fade-in-up stagger-2">
         <EventStream />
 
         <div className="space-y-6">
@@ -329,21 +329,21 @@ function DashboardPage() {
           <ProofRegistryCard />
 
           <div className="card">
-            <h3 className="font-semibold text-dnc-blue-900 mb-3">
+            <h3 className="font-semibold text-slate-100 mb-3">
               Network Stats
             </h3>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Network:</span>
-                <span className="text-gray-800 font-medium">Anvil (Local)</span>
+                <span className="text-slate-400">Network:</span>
+                <span className="text-slate-200 font-medium">Anvil (Local)</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Chain ID:</span>
-                <span className="text-gray-800 font-medium">31337</span>
+                <span className="text-slate-400">Chain ID:</span>
+                <span className="text-slate-200 font-medium">31337</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Standard:</span>
-                <span className="text-gray-800 font-medium">
+                <span className="text-slate-400">Standard:</span>
+                <span className="text-slate-200 font-medium">
                   ERC-5192 (Soulbound)
                 </span>
               </div>
@@ -361,10 +361,10 @@ function DashboardPage() {
 
 export default function ProtectedDashboardPage() {
   return (
-    <ProtectedRoute requiredRole="admin">
-      <AdminLayout>
+    <AdminLayout>
+      <ProtectedRoute requiredRole="admin">
         <DashboardPage />
-      </AdminLayout>
-    </ProtectedRoute>
+      </ProtectedRoute>
+    </AdminLayout>
   );
 }

@@ -1,74 +1,77 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { motion } from 'framer-motion';
 import WalletConnect from './WalletConnect';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
-const sidebarItems = [
+const navItems = [
   { href: '/', label: 'Trang chủ', icon: '🏠' },
-  { href: '/verifier', label: 'Tra cứu văn bằng', icon: '🔍' },
+  { href: '/verifier', label: 'Tra cứu', icon: '🔍' },
   { href: '/wallet', label: 'Ví SBT', icon: '🎓' },
   { href: '/huong-dan', label: 'Hướng dẫn', icon: '📖' },
 ];
 
-function Sidebar() {
-  const router = useRouter();
-
-  return (
-    <aside className="w-64 bg-slate-950 border-r border-slate-800 fixed left-0 top-0 h-screen overflow-y-auto z-40">
-      <div className="p-4 border-b border-slate-800">
-        <Link href="/" className="flex items-center space-x-3">
-          <img src="/assets/logo.svg" alt="DNC" className="h-8 brightness-0 invert" />
-          <div>
-            <h1 className="text-sm font-bold text-white leading-tight">DNC-CertiTrust</h1>
-            <p className="text-xs text-slate-400">Cổng Công Dân</p>
-          </div>
-        </Link>
-      </div>
-      <nav className="p-3 space-y-1">
-        {sidebarItems.map((item) => {
-          const isActive =
-            item.href === '/'
-              ? router.pathname === '/'
-              : router.pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-blue-600/20 text-blue-400 border-l-2 border-blue-400'
-                  : 'text-slate-300 hover:text-blue-400 hover:bg-slate-800/50 border-l-2 border-transparent'
-              }`}
-            >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-      <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
-        <p className="text-xs text-slate-500 text-center">Cổng Công Dân</p>
-      </div>
-    </aside>
-  );
-}
+const accent = 'blue';
 
 export default function CitizenLayout({ children }: LayoutProps) {
+  const router = useRouter();
+
+  const isActive = (href: string) =>
+    href === '/' ? router.pathname === '/' : router.pathname.startsWith(href);
+
   return (
-    <div className="min-h-screen flex bg-slate-50">
-      <Sidebar />
-      <div className="flex-1 ml-64">
-        <header className="sticky top-0 bg-slate-900/80 backdrop-blur-md border-b border-slate-800 z-30">
-          <div className="flex items-center justify-end h-16 px-6">
-            <WalletConnect />
-          </div>
-        </header>
-        <main>{children}</main>
+    <div className="min-h-screen bg-slate-950 text-slate-200">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute -top-40 -left-40 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
       </div>
+      <header className="sticky top-0 z-50 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <Link href="/" className="flex items-center space-x-3 shrink-0 mr-6">
+              <img src="/assets/logo.svg" alt="DNC" className="h-8 brightness-0 invert" />
+              <div className="hidden sm:block">
+                <h1 className="text-sm font-bold text-white leading-tight">DNC-CertiTrust</h1>
+                <p className="text-xs text-slate-500">Cổng Công Dân</p>
+              </div>
+            </Link>
+
+            <nav className="hidden md:flex items-center space-x-1 flex-1">
+              {navItems.map((item) => {
+                const active = isActive(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="relative px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+                  >
+                    {active && (
+                      <motion.div
+                        layoutId="activeTab"
+                        className="absolute inset-0 bg-blue-500/10 rounded-lg border border-blue-500/20"
+                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    <span className={`relative z-10 flex items-center space-x-1.5 ${active ? 'text-blue-400' : 'text-slate-400 hover:text-blue-400'}`}>
+                      <span className="text-base">{item.icon}</span>
+                      <span>{item.label}</span>
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="shrink-0 ml-4">
+              <WalletConnect />
+            </div>
+          </div>
+        </div>
+      </header>
+      <main className="animate-fade-in">{children}</main>
     </div>
   );
 }

@@ -8,7 +8,7 @@ import SpotlightCard from './SpotlightCard';
 
 export default function HeroSection() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-blue-50/20 to-white">
+    <section className="relative overflow-hidden bg-gradient-to-b from-slate-950 via-blue-950/20 to-slate-950">
       <HeroBackground />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 pt-20 pb-16 sm:pt-28 sm:pb-20">
@@ -17,9 +17,9 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center space-x-2 bg-dnc-blue-50 border border-dnc-blue-100 text-dnc-blue-700 text-xs font-medium px-4 py-1.5 rounded-full mb-6"
+            className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/20 text-blue-300 text-xs font-medium px-4 py-1.5 rounded-full mb-6"
           >
-            <span className="w-2 h-2 rounded-full bg-dnc-blue-500 animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
             <span>Đề án 2728/QĐ-UBND · TP Đà Nẵng</span>
           </motion.div>
 
@@ -32,10 +32,10 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7 }}
-            className="text-base sm:text-lg text-gray-500 max-w-2xl mx-auto mt-4 leading-relaxed"
+            className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mt-4 leading-relaxed"
           >
             Hệ thống xác minh văn bằng, chứng chỉ trên nền tảng blockchain{' '}
-            <span className="font-semibold text-dnc-blue-600">DNC-Chain</span> —{' '}
+            <span className="font-semibold text-blue-400">DNC-Chain</span> —{' '}
             thuộc Đề án thúc đẩy ứng dụng công nghệ chuỗi khối tại TP Đà Nẵng đến năm 2030.
           </motion.p>
 
