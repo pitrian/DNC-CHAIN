@@ -38,7 +38,7 @@ It aligns with **Đề án 2728/QĐ-UBND** (Da Nang City's Blockchain Developmen
 ### Key Features
 
 - 🔐 **Soulbound Diplomas** — Non-transferable digital degrees (ERC-5192)
-- 🏛️ **RBAC** — Role-based access control (Admin / Authority / Education / Science & Tech)
+- 🏛️ **RBAC** — 4-tier role hierarchy (Admin → Authority → Education/Science & Tech → User)
 - 📄 **Document Proof Registry** — Tamper-proof hash-based verification
 - 🔍 **Public Verification** — Anyone can verify document authenticity
 - 🛡️ **Soulbound by Design** — Tokens cannot be transferred or approved
@@ -94,25 +94,47 @@ DNC-CertiTrust solves this by putting **document hashes on an immutable blockcha
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Data Flow
+### Data Flow (Two Minting Paths)
 
+**Path 1 — EDUCATION (Academic Diploma):**
 ```
-Issuer (Sở GD&ĐT)
-  │ 1. Connect wallet (AUTHORITY_ROLE)
+School Staff (EDUCATION_ROLE)
+  │ 1. Connect wallet with EDUCATION_ROLE
   │ 2. Upload diploma file
   │ 3. Client-side SHA-256 hashing (Web Crypto API)
-  │ 4. Submit transaction: mintDegree(student, hashURI)
+  │ 4. Submit transaction: mintDegree(student, metadataURI)
   ▼
 Smart Contract
-  │ 5. Verify issuer has AUTHORITY_ROLE
+  │ 5. Verify sender has EDUCATION_ROLE or AUTHORITY_ROLE
   │ 6. Mint Soulbound Token (non-transferable)
   │ 7. Emit DegreeMinted event
   ▼
-Verifier (Employer)
-  │ 8. Drop file into verification portal
-  │ 9. Client-side SHA-256 hashing
-  │ 10. Call verifyProof(hash)
-  │ 11. Receive: exists ✓ | issuer | timestamp
+Student (Degree Holder)
+  │ 8. View SBT in Citizen Passport
+  │ 9. Share QR code for verification
+```
+
+**Path 2 — AUTHORITY (City-Level Certificate/Award):**
+```
+City Official (AUTHORITY_ROLE)
+  │ 1. Connect wallet with AUTHORITY_ROLE
+  │ 2. Upload award/certificate document
+  │ 3. Submit transaction: mintDegree(recipient, metadataURI)
+  ▼
+Smart Contract
+  │ 4. Mint Soulbound Token
+  ▼
+Recipient
+  │ 5. View city-issued certificate in wallet
+```
+
+**Path 3 — Public Verification:**
+```
+Verifier (Employer / Any)
+  │ 1. Drop file into verification portal
+  │ 2. Client-side SHA-256 hashing
+  │ 3. Call verifyProof(hash)
+  │ 4. Receive: exists ✓ | issuer | timestamp
   ▼
 Result: Authentic ✓ or Not Found ✗
 ```
@@ -157,16 +179,42 @@ Result: Authentic ✓ or Not Found ✗
 
 ### DNCAccessControl.sol
 
-Role-based access control for the DNC ecosystem.
+Role-based access control with **4-tier hierarchy** reflecting Da Nang City's administrative structure.
 
 ```
-Roles:
-  DEFAULT_ADMIN_ROLE  ── Admin (grant/revoke all roles, pause/unpause)
-  AUTHORITY_ROLE      ── Full authority (mint, register, revoke)
-  EDUCATION_ROLE      ── Sở GD&ĐT (mint degrees, burn degrees)
-  SCIENCE_TECH_ROLE   ── Sở KH&CN (register proofs, revoke proofs)
-  USER_ROLE           ── Citizens, businesses (verify only)
+ROLE HIERARCHY (High → Low Authority):
+
+  DEFAULT_ADMIN_ROLE  ── Quản trị Hệ thống (UBND / Ban Đề án 2728)
+  │  • Cấp/thu hồi mọi role khác
+  │  • Pause/unpause toàn hệ thống (Circuit Breaker)
+  │  • Giám sát & phân quyền cho các Sở/Trường
+  │
+  ├── AUTHORITY_ROLE  ── Thẩm quyền Liên ngành / Cấp Thành phố
+  │   • Đại diện: UBND TP, Chủ tịch TP, Thanh tra
+  │   • Cấp: Bằng khen, Giấy CN giải thưởng, Quyết định HC cấp TP
+  │   • Thu hồi: MỌI văn bằng (kể cả do EDUCATION cấp) khi có quyết định
+  │   • Phạm vi: TOÀN THÀNH PHỐ — có thể can thiệp chéo
+  │
+  ├── EDUCATION_ROLE  ── Thẩm quyền Ngành Giáo dục (Sở GD&ĐT / Các Trường)
+  │   • Đại diện: Sở GD&ĐT, Đại học, Cao đẳng trên địa bàn TP
+  │   • Cấp: Văn bằng tốt nghiệp, Chứng chỉ học thuật, Bảng điểm
+  │   • Thu hồi: CHỈ văn bằng do Trường mình phát hành
+  │   • Phạm vi: NỘI BỘ TRƯỜNG — không thể can thiệp bằng của trường khác
+  │
+  └── SCIENCE_TECH_ROLE ── Thẩm quyền KH&CN (Sở KH&CN)
+      • Đại diện: Sở Khoa học & Công nghệ
+      • Đăng ký hồ sơ điện tử (document hash proofs)
+      • Phạm vi: SỞ KH&CN
+
+  USER_ROLE (future) ── Citizens, businesses (self-registration)
 ```
+
+**⚠️ Lưu ý về Scope of Power (Phạm vi Thẩm quyền):**
+
+EDUCATION và AUTHORITY đều có thể gọi `mintDegree()` để tạo SBT, nhưng khác nhau về:
+1. **Phạm vi**: EDUCATION chỉ trong trường mình; AUTHORITY toàn TP
+2. **Loại văn bằng**: EDUCATION → bằng học thuật; AUTHORITY → bằng khen/chứng nhận cấp TP
+3. **Quyền thu hồi**: EDUCATION chỉ thu hồi được bằng mình phát hành; AUTHORITY thu hồi được tất cả
 
 **Pausable (Circuit Breaker):**
 | Function | Access | Description |
@@ -217,18 +265,20 @@ struct ProofInfo {
 Soulbound Diploma token (ERC-5192 + ERC-721URIStorage).
 
 **Key Properties:**
-- **Non-transferable**: All transfer/approve functions revert
-- **Mint-only**: Only EDUCATION_ROLE / AUTHORITY can mint
-- **Burn**: Owner, EDUCATION_ROLE, AUTHORITY, or ADMIN can burn
-- **Pausable**: Mint blocked when system is paused
+- **Non-transferable**: All transfer/approve functions revert (Soulbound)
+- **Mint-only**: Both EDUCATION_ROLE (academic) and AUTHORITY_ROLE (city-level) can mint
+- **Burn by scope**: Owner burns own; EDUCATION burns degrees their institution issued; AUTHORITY/ADMIN burns any degree
+- **Pausable**: Mint blocked when system is paused (Circuit Breaker)
 - **Metadata**: ERC-721 URI storage for diploma metadata
 - **Interface**: ERC-165 + IERC5192 (`locked() → true`)
+
+> **Business Rule**: When EDUCATION_ROLE mints, the diploma is scoped to their institution (issuer is tracked). When AUTHORITY_ROLE mints, it's a city-level certificate with cross-jurisdiction validity. Both produce ERC-5192 SBTs, but the metadata and legal weight differ.
 
 **Key Functions:**
 | Function | Access | Description |
 |----------|--------|-------------|
-| `mintDegree(address, string)` | EDUCATION_ROLE / AUTHORITY | Mint a new soulbound diploma |
-| `burnDegree(uint256)` | Owner / EDUCATION_ROLE / AUTHORITY / ADMIN | Burn a diploma |
+| `mintDegree(address, string)` | EDUCATION_ROLE / AUTHORITY | Mint soulbound diploma (academic or city-level) |
+| `burnDegree(uint256)` | Owner / EDUCATION_ROLE / AUTHORITY / ADMIN | Burn a diploma (scoped to role's authority) |
 | `locked(uint256)` | Public | Check if token is locked (always true) |
 | `getDegreeIssuer(uint256)` | Public | Get the issuer of a diploma |
 | `getDegreesByOwner(address)` | Public | List all diplomas owned by address |
@@ -378,6 +428,30 @@ const owner = await publicClient.readContract({
   args: [tokenId],
 });
 ```
+
+---
+
+## Production Scaling: Delegated Administration Model
+
+When scaling from local test to city-wide deployment with 20+ universities, the system supports a **delegated administration hierarchy**:
+
+```
+Admin TP (DEFAULT_ADMIN)
+  │  Chỉ cấp EDUCATION_ROLE cho 20 Ví Master đại diện mỗi Trường
+  ▼
+School Master Wallet (EDUCATION_ROLE)
+  │  Tự thêm/xóa cán bộ phòng Đào tạo của Trường mình
+  ▼
+School Staff (mint degrees for students)
+```
+
+### Technical Approaches (Future)
+
+| Level | Approach | Description |
+|-------|----------|-------------|
+| **1** | Institution Registry (`mapping(address ⇒ bytes32)`) | Gán mã trường cho từng ví issuer, tự động gắn vào metadata |
+| **2** | Sub-role Admin (`_setRoleAdmin()`) | Dùng OpenZeppelin AccessControl phân cấp: trường tự quản lý nhân viên mint bằng |
+| **3** | SSO / VNeID Integration | Trường đăng nhập bằng tài khoản định danh, backend dùng Multi-sig Safe ký giao dịch tự động |
 
 ---
 

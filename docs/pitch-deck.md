@@ -67,12 +67,14 @@
 ## Three contracts, one mission
 
 ### `DNCAccessControl`
-- Role-Based Access Control (DEFAULT_ADMIN, AUTHORITY, USER)
-- Only AUTHORITY can mint diplomas and register proofs
+- 4-tier Role Hierarchy: DEFAULT_ADMIN (Admin TP) → AUTHORITY (Liên ngành) → EDUCATION (Sở/Trường) / SCIENCE_TECH (Sở KH&CN) → USER
+- EDUCATION_ROLE: mints academic diplomas (trường học)
+- AUTHORITY_ROLE: mints city-level certificates (UBND TP), can revoke any diploma
+- SCIENCE_TECH_ROLE: registers document hash proofs
 
 ### `DNCUniversityDegree`
 - ERC-5192 Soulbound Token (locked transfers)
-- `mintDegree(to, uri)` — only AUTHORITY
+- `mintDegree(to, uri)` — EDUCATION_ROLE (academic) or AUTHORITY_ROLE (city-level)
 - `getDegreesByOwner(owner)` — query all diplomas
 
 ### `DNCProofRegistry`
