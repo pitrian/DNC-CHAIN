@@ -14,10 +14,13 @@ const navItems = [
   { href: '/huong-dan', label: 'Hướng dẫn', icon: '📖' },
 ];
 
-const accent = 'emerald';
-
 export default function IssuerLayout({ children }: LayoutProps) {
   const router = useRouter();
+  const path = router.pathname;
+  const accent = path.startsWith('/issuer/education') ? 'emerald'
+    : path.startsWith('/issuer/science') ? 'blue'
+    : path.startsWith('/issuer/authority') ? 'amber'
+    : 'emerald';
 
   const isActive = (href: string) =>
     href === '/' ? router.pathname === '/' : router.pathname.startsWith(href);
@@ -25,8 +28,8 @@ export default function IssuerLayout({ children }: LayoutProps) {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200">
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-500/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+        <div className={`absolute -top-40 -right-40 w-80 h-80 ${accent === 'blue' ? 'bg-blue-500/5' : accent === 'amber' ? 'bg-amber-500/5' : 'bg-emerald-500/5'} rounded-full blur-3xl`} />
+        <div className={`absolute -bottom-40 -left-40 w-96 h-96 ${accent === 'blue' ? 'bg-blue-500/5' : accent === 'amber' ? 'bg-amber-500/5' : 'bg-emerald-500/5'} rounded-full blur-3xl`} />
       </div>
       <header className="sticky top-0 z-50 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,11 +54,11 @@ export default function IssuerLayout({ children }: LayoutProps) {
                     {active && (
                       <motion.div
                         layoutId="activeTab"
-                        className="absolute inset-0 bg-emerald-500/10 rounded-lg border border-emerald-500/20"
+                        className={`absolute inset-0 ${accent === 'blue' ? 'bg-blue-500/10 border-blue-500/20' : accent === 'amber' ? 'bg-amber-500/10 border-amber-500/20' : 'bg-emerald-500/10 border-emerald-500/20'} rounded-lg border`}
                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                       />
                     )}
-                    <span className={`relative z-10 flex items-center space-x-1.5 ${active ? 'text-emerald-400' : 'text-slate-400 hover:text-emerald-400'}`}>
+                    <span className={`relative z-10 flex items-center space-x-1.5 ${active ? (accent === 'blue' ? 'text-blue-400' : accent === 'amber' ? 'text-amber-400' : 'text-emerald-400') : `text-slate-400 ${accent === 'blue' ? 'hover:text-blue-400' : accent === 'amber' ? 'hover:text-amber-400' : 'hover:text-emerald-400'}`}`}>
                       <span className="text-base">{item.icon}</span>
                       <span>{item.label}</span>
                     </span>

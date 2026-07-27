@@ -12,7 +12,7 @@ import {
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
-  requiredRole: 'admin' | 'issuer' | 'any';
+  requiredRole: 'admin' | 'issuer' | 'any' | 'education' | 'science' | 'authority';
 }
 
 function Spinner() {
@@ -109,6 +109,12 @@ export default function ProtectedRoute({
     authorized = isAdmin;
   } else if (requiredRole === 'issuer') {
     authorized = isEducation || isScienceTech || isAuthority;
+  } else if (requiredRole === 'education') {
+    authorized = isEducation || isAuthority;
+  } else if (requiredRole === 'science') {
+    authorized = isScienceTech || isAuthority;
+  } else if (requiredRole === 'authority') {
+    authorized = isAuthority;
   }
 
   if (!authorized) {
