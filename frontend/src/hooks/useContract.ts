@@ -519,6 +519,45 @@ export function useDegreeContract() {
   };
 }
 
+export function useDegreesByOwner(owner: `0x${string}` | undefined) {
+  const { degreeAddress } = useContracts();
+  const { data, isLoading, error } = useReadContract({
+    address: degreeAddress,
+    abi: DEGREE_ABI,
+    functionName: 'getDegreesByOwner',
+    args: owner ? [owner] : undefined,
+    query: { enabled: !!owner },
+  });
+  useEffect(() => { if (error) console.error('[useDegreesByOwner]', error); }, [error]);
+  return { tokenIds: (data || []) as bigint[], isLoading, error };
+}
+
+export function useDegreeTokenURI(tokenId: bigint | undefined) {
+  const { degreeAddress } = useContracts();
+  const { data, isLoading, error } = useReadContract({
+    address: degreeAddress,
+    abi: DEGREE_ABI,
+    functionName: 'tokenURI',
+    args: tokenId !== undefined ? [tokenId] : undefined,
+    query: { enabled: tokenId !== undefined },
+  });
+  useEffect(() => { if (error) console.error('[useDegreeTokenURI]', error); }, [error]);
+  return { uri: data as string | undefined, isLoading, error };
+}
+
+export function useDegreeLocked(tokenId: bigint | undefined) {
+  const { degreeAddress } = useContracts();
+  const { data, isLoading, error } = useReadContract({
+    address: degreeAddress,
+    abi: DEGREE_ABI,
+    functionName: 'locked',
+    args: tokenId !== undefined ? [tokenId] : undefined,
+    query: { enabled: tokenId !== undefined },
+  });
+  useEffect(() => { if (error) console.error('[useDegreeLocked]', error); }, [error]);
+  return { locked: !!data, isLoading, error };
+}
+
 export function usePauseControl() {
   const { accessControlAddress } = useContracts();
   const { data: txHash, writeContract } = useWriteContract();

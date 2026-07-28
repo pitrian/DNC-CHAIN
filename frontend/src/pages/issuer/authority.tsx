@@ -6,7 +6,7 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 import IssuerLayout from '../../components/IssuerLayout';
 import RoleBanner from '../../components/RoleBanner';
 import BatchIssuance from '../../components/BatchIssuance';
-import { useIsAuthority, useIsEducation, useIsScienceTech, useDegreeContract, useProofRegistry } from '../../hooks/useContract';
+import { useIsAuthority, useIsEducation, useIsScienceTech, useDegreeContract, useProofRegistry, useDegreesByOwner, useRevokeDegree, useDegreeTokenURI, useDegreeLocked, useProofData, useRevokeProof } from '../../hooks/useContract';
 
 type Tab = 'certificate' | 'education' | 'proof';
 
@@ -37,7 +37,7 @@ function AuthorityPage() {
 
   useEffect(() => {
     if (isConfirmed) {
-      setStatus({ type: 'success', message: 'Giao d\u1ecbch \u0111\xe3 \u0111\u01b0\u1ee3c x\xe1c nh\u1eadn th\xe0nh c\xf4ng!' });
+      setStatus({ type: 'success', message: 'Giao dịch đã được xác nhận thành công!' });
       setIsSubmitting(false);
       setTxHash(undefined);
     }
@@ -45,14 +45,14 @@ function AuthorityPage() {
 
   useEffect(() => {
     if (txHash && isConfirming) {
-      setStatus({ type: 'info', message: `\u0110ang ch\u1edd x\xe1c nh\u1eadn... ${txHash.slice(0, 10)}...` });
+      setStatus({ type: 'info', message: `Đang chờ xác nhận... ${txHash.slice(0, 10)}...` });
     }
   }, [txHash, isConfirming]);
 
   const handleCertificateMint = async (hash: `0x${string}`, _file: File) => {
     setStatus(null);
     if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) {
-      setStatus({ type: 'error', message: 'Vui l\xf2ng nh\u1eadp \u0111\u1ecba ch\u1ec9 ng\u01b0\u1eddi nh\u1eadn h\u1ee3p l\u1ec7' });
+      setStatus({ type: 'error', message: 'Vui lòng nhập địa chỉ người nhận hợp lệ' });
       return;
     }
     setIsSubmitting(true);
@@ -61,7 +61,7 @@ function AuthorityPage() {
       mintDegree(recipient as `0x${string}`, metadataUri);
     } catch (error) {
       console.error(error);
-      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao d\u1ecbch th\u1ea5t b\u1ea1i'}` });
+      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao dịch thất bại'}` });
       setIsSubmitting(false);
     }
   };
@@ -69,7 +69,7 @@ function AuthorityPage() {
   const handleEducationMint = async (hash: `0x${string}`, _file: File) => {
     setStatus(null);
     if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) {
-      setStatus({ type: 'error', message: 'Vui l\xf2ng nh\u1eadp \u0111\u1ecba ch\u1ec9 ng\u01b0\u1eddi nh\u1eadn h\u1ee3p l\u1ec7' });
+      setStatus({ type: 'error', message: 'Vui lòng nhập địa chỉ người nhận hợp lệ' });
       return;
     }
     setIsSubmitting(true);
@@ -78,7 +78,7 @@ function AuthorityPage() {
       mintDegree(recipient as `0x${string}`, metadataUri);
     } catch (error) {
       console.error(error);
-      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao d\u1ecbch th\u1ea5t b\u1ea1i'}` });
+      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao dịch thất bại'}` });
       setIsSubmitting(false);
     }
   };
@@ -90,15 +90,107 @@ function AuthorityPage() {
       registerProof(hash);
     } catch (error) {
       console.error(error);
-      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao d\u1ecbch th\u1ea5t b\u1ea1i'}` });
+      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao dịch thất bại'}` });
       setIsSubmitting(false);
     }
   };
 
+  const [lookupOwner, setLookupOwner] = useState('');
+  const [searchOwner, setSearchOwner] = useState<`0x${string}` | undefined>();
+  const { tokenIds, isLoading: isLoadingDegrees } = useDegreesByOwner(searchOwner);
+  const { burnDegree, txHash: burnTxHash } = useRevokeDegree();
+  const [burnTxHash_, setBurnTxHash_] = useState<`0x${string}` | undefined>();
+  const [burnStatus, setBurnStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+
+  const { isLoading: isBurnConfirming, isSuccess: isBurnConfirmed } =
+    useWaitForTransactionReceipt({ hash: burnTxHash_ });
+
+  useEffect(() => {
+    if (burnTxHash) setBurnTxHash_(burnTxHash);
+  }, [burnTxHash]);
+
+  useEffect(() => {
+    if (isBurnConfirmed) {
+      setBurnStatus({ type: 'success', message: 'Đã thu hồi văn bằng thành công!' });
+      setBurnTxHash_(undefined);
+    }
+  }, [isBurnConfirmed]);
+
+  useEffect(() => {
+    if (burnTxHash_ && isBurnConfirming) {
+      setBurnStatus({ type: 'info', message: `Đang chờ xác nhận thu hồi... ${burnTxHash_.slice(0, 10)}...` });
+    }
+  }, [burnTxHash_, isBurnConfirming]);
+
+  const handleDegreeLookup = () => {
+    if (!lookupOwner.startsWith('0x') || lookupOwner.length !== 42) {
+      setBurnStatus({ type: 'error', message: 'Vui lòng nhập địa chỉ ví hợp lệ' });
+      return;
+    }
+    setBurnStatus(null);
+    setSearchOwner(lookupOwner as `0x${string}`);
+  };
+
+  const handleRevokeDegree = async (tokenId: bigint) => {
+    setBurnStatus(null);
+    try {
+      burnDegree(tokenId);
+    } catch (error) {
+      setBurnStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Thu hồi thất bại'}` });
+    }
+  };
+
+  const [lookupHash, setLookupHash] = useState('');
+  const [searchHash, setSearchHash] = useState<`0x${string}` | undefined>();
+  const { proof, isLoading: isLoadingProof } = useProofData(searchHash);
+  const [proofLookupStatus, setProofLookupStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+  const { revokeProof, txHash: revokeTxHash } = useRevokeProof();
+  const [revokeTxHash_, setRevokeTxHash_] = useState<`0x${string}` | undefined>();
+  const [revokeStatus, setRevokeStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+
+  const { isLoading: isRevokeConfirming, isSuccess: isRevokeConfirmed } =
+    useWaitForTransactionReceipt({ hash: revokeTxHash_ });
+
+  useEffect(() => {
+    if (revokeTxHash) setRevokeTxHash_(revokeTxHash);
+  }, [revokeTxHash]);
+
+  useEffect(() => {
+    if (isRevokeConfirmed) {
+      setRevokeStatus({ type: 'success', message: 'Đã thu hồi bằng chứng thành công!' });
+      setRevokeTxHash_(undefined);
+    }
+  }, [isRevokeConfirmed]);
+
+  useEffect(() => {
+    if (revokeTxHash_ && isRevokeConfirming) {
+      setRevokeStatus({ type: 'info', message: `Đang chờ xác nhận thu hồi... ${revokeTxHash_.slice(0, 10)}...` });
+    }
+  }, [revokeTxHash_, isRevokeConfirming]);
+
+  const handleProofLookup = () => {
+    if (!lookupHash.startsWith('0x') || lookupHash.length !== 66) {
+      setProofLookupStatus({ type: 'error', message: 'Vui lòng nhập hash hợp lệ (0x + 64 ký tự hex)' });
+      return;
+    }
+    setProofLookupStatus(null);
+    setSearchHash(lookupHash as `0x${string}`);
+  };
+
+  const handleRevokeProofAction = async () => {
+    if (!proof || proof.revoked || !searchHash) return;
+    setRevokeStatus(null);
+    try {
+      revokeProof(searchHash);
+    } catch (error) {
+      setRevokeStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Thu hồi thất bại'}` });
+    }
+  };
+
   const tabs: { key: Tab; label: string; icon: string }[] = [
-    { key: 'certificate', label: 'Ch\u1ee9ng nh\u1eadn c\u1ea5p TP', icon: '\ud83c\udfc6' },
-    { key: 'education', label: 'V\u0103n b\u1eb1ng h\u1ecdc thu\u1eadt', icon: '\ud83c\udf93' },
-    { key: 'proof', label: '\u0110\u0103ng k\xfd h\u1ed3 s\u01a1', icon: '\ud83d\udcc4' },
+    { key: 'certificate', label: 'Chứng nhận cấp TP', icon: '🏆' },
+    { key: 'education', label: 'Văn bằng học thuật', icon: '🎓' },
+    { key: 'proof', label: 'Đăng ký hồ sơ', icon: '📄' },
   ];
 
   const getFileUploader = () => {
@@ -127,7 +219,7 @@ function AuthorityPage() {
           </svg>
           <span className="text-amber-400 text-sm font-semibold uppercase tracking-wider">AUTHORITY · Full Access</span>
         </div>
-        <h1 className="section-title">C\u1ed5ng Qu\u1ea3n l\xfd C\u1ea5p Th\xe0nh ph\u1ed1</h1>
+        <h1 className="section-title">Cổng Quản lý Cấp Thành phố</h1>
         <p className="section-subtitle">City Authority Management Portal</p>
       </div>
 
@@ -149,15 +241,15 @@ function AuthorityPage() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-100">Qu\u1ea3n l\xfd To\xe0n di\u1ec7n</h2>
-            <p className="text-xs text-slate-400">C\u1ea5p ch\u1ee9ng nh\u1eadn, v\u0103n b\u1eb1ng v\xe0 \u0111\u0103ng k\xfd h\u1ed3 s\u01a1</p>
+            <h2 className="text-lg font-bold text-slate-100">Quản lý Toàn diện</h2>
+            <p className="text-xs text-slate-400">Cấp chứng nhận, văn bằng và đăng ký hồ sơ</p>
           </div>
         </div>
 
         <div className="bg-amber-500/5 border border-amber-500/10 rounded-lg p-3 mb-6">
           <p className="text-sm text-amber-300/80 flex items-start space-x-2">
-            <span className="mt-0.5 shrink-0">\u26a0\ufe0f</span>
-            <span>Ph\u1ea1m vi: To\xe0n th\xe0nh ph\u1ed1. C\xf3 th\u1ec3 thu h\u1ed3i m\u1ecdi v\u0103n b\u1eb1ng \u0111\xe3 c\u1ea5p v\xe0 th\u1ef1c hi\u1ec7n t\u1ea5t c\u1ea3 ch\u1ee9c n\u0103ng c\u1ea5p ph\xe1t.</span>
+            <span className="mt-0.5 shrink-0">⚠️</span>
+            <span>Phạm vi: Toàn thành phố. Có thể thu hồi mọi văn bằng đã cấp và thực hiện tất cả chức năng cấp phát.</span>
           </p>
         </div>
 
@@ -181,7 +273,7 @@ function AuthorityPage() {
         {activeTab !== 'proof' && (
           <div className="mb-6">
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              \u0110\u1ecba ch\u1ec9 ng\u01b0\u1eddi nh\u1eadn
+              Địa chỉ người nhận
             </label>
             <input
               type="text"
@@ -195,14 +287,14 @@ function AuthorityPage() {
 
         {activeTab === 'proof' && (
           <p className="text-sm text-slate-400 mb-4">
-            T\u1ea3i l\xean t\xe0i li\u1ec7u \u0111\u1ec3 \u0111\u0103ng k\xfd hash tr\xean blockchain l\xe0m b\u1eb1ng ch\u1ee9ng t\u1ed3n t\u1ea1i.
+            Tải lên tài liệu để đăng ký hash trên blockchain làm bằng chứng tồn tại.
           </p>
         )}
 
         {getFileUploader()}
 
         <div className="mt-6 border-t border-amber-500/10 pt-6">
-          <BatchIssuance metadataType={activeTab === 'education' ? 'ACADEMIC_DEGREE' : 'CITY_CERTIFICATE'} />
+          <BatchIssuance metadataType={activeTab === 'education' ? 'ACADEMIC_DEGREE' : 'CITY_CERTIFICATE'} accent="amber" />
         </div>
       </div>
 
@@ -217,6 +309,173 @@ function AuthorityPage() {
           {status.message}
         </div>
       )}
+
+      <div className="mt-8 space-y-6">
+        <div className="card border-amber-500/20 animate-fade-in-up">
+          <details className="group">
+            <summary className="flex items-center space-x-2 cursor-pointer list-none">
+              <svg className="w-5 h-5 text-amber-400 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <h3 className="text-lg font-bold text-slate-100">Tra cứu & Thu hồi văn bằng</h3>
+            </summary>
+            <div className="mt-4 space-y-4">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={lookupOwner}
+                  onChange={(e) => setLookupOwner(e.target.value)}
+                  placeholder="Địa chỉ ví người sở hữu (0x...)"
+                  className="input-field font-mono text-sm flex-1"
+                />
+                <button
+                  onClick={handleDegreeLookup}
+                  disabled={isLoadingDegrees}
+                  className="px-4 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition-colors"
+                >
+                  {isLoadingDegrees ? 'Đang tra...' : 'Tra cứu'}
+                </button>
+              </div>
+
+              {searchOwner && !isLoadingDegrees && (
+                <div className="bg-slate-800/60 rounded-lg p-4">
+                  {tokenIds.length === 0 ? (
+                    <p className="text-sm text-slate-400">Không tìm thấy văn bằng nào.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      <p className="text-sm text-slate-400 mb-2">Tìm thấy {tokenIds.length} văn bằng:</p>
+                      {tokenIds.map((id) => (
+                        <div key={id.toString()} className="flex items-center justify-between bg-slate-700/30 rounded-lg px-4 py-3">
+                          <DegreeInfo tokenId={id} />
+                          <button
+                            onClick={() => handleRevokeDegree(id)}
+                            disabled={!!burnTxHash_ && isBurnConfirming}
+                            className="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 disabled:opacity-30 text-white text-xs font-medium rounded-lg transition-colors"
+                          >
+                            Thu hồi
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </details>
+        </div>
+
+        {burnStatus && (
+          <div className={`p-4 rounded-lg text-sm animate-fade-in ${
+            burnStatus.type === 'success'
+              ? 'bg-green-500/10 text-green-300 border border-green-500/20'
+              : burnStatus.type === 'error'
+              ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+              : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
+          }`}>
+            {burnStatus.message}
+          </div>
+        )}
+
+        <div className="card border-amber-500/20 animate-fade-in-up">
+          <details className="group">
+            <summary className="flex items-center space-x-2 cursor-pointer list-none">
+              <svg className="w-5 h-5 text-amber-400 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+              <h3 className="text-lg font-bold text-slate-100">Tra cứu & Thu hồi bằng chứng hồ sơ</h3>
+            </summary>
+            <div className="mt-4 space-y-4">
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  value={lookupHash}
+                  onChange={(e) => setLookupHash(e.target.value)}
+                  placeholder="File hash (0x...)"
+                  className="input-field font-mono text-sm flex-1"
+                />
+                <button
+                  onClick={handleProofLookup}
+                  disabled={isLoadingProof}
+                  className="px-4 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition-colors"
+                >
+                  {isLoadingProof ? 'Đang tra...' : 'Tra cứu'}
+                </button>
+              </div>
+
+              {proofLookupStatus && (
+                <div className={`p-3 rounded-lg text-sm ${
+                  proofLookupStatus.type === 'error'
+                    ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+                    : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
+                }`}>
+                  {proofLookupStatus.message}
+                </div>
+              )}
+
+              {searchHash && !isLoadingProof && (
+                <div className="bg-slate-800/60 rounded-lg p-4">
+                  {!proof || (proof.timestamp === 0n && proof.issuer === '0x0000000000000000000000000000000000000000') ? (
+                    <p className="text-sm text-slate-400">Không tìm thấy bằng chứng cho hash này.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <p className="text-xs text-slate-500">Ngày tạo</p>
+                          <p className="text-slate-200 font-mono">{new Date(Number(proof.timestamp) * 1000).toLocaleString('vi-VN')}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs text-slate-500">Người phát hành</p>
+                          <p className="text-slate-200 font-mono text-xs truncate" title={proof.issuer}>{proof.issuer}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${proof.revoked ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'}`}>
+                          {proof.revoked ? 'Đã thu hồi' : 'Hiệu lực'}
+                        </span>
+                        {!proof.revoked && (
+                          <button
+                            onClick={handleRevokeProofAction}
+                            disabled={!!revokeTxHash_ && isRevokeConfirming}
+                            className="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 disabled:opacity-30 text-white text-xs font-medium rounded-lg transition-colors"
+                          >
+                            Thu hồi
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </details>
+        </div>
+
+        {revokeStatus && (
+          <div className={`p-4 rounded-lg text-sm animate-fade-in ${
+            revokeStatus.type === 'success'
+              ? 'bg-green-500/10 text-green-300 border border-green-500/20'
+              : revokeStatus.type === 'error'
+              ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+              : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
+          }`}>
+            {revokeStatus.message}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DegreeInfo({ tokenId }: { tokenId: bigint }) {
+  const { uri } = useDegreeTokenURI(tokenId);
+  const { locked } = useDegreeLocked(tokenId);
+  return (
+    <div className="flex items-center space-x-3">
+      <span className="text-sm font-mono text-amber-300">#{tokenId.toString()}</span>
+      {uri && <span className="text-xs text-slate-500 truncate max-w-[200px]">{uri}</span>}
+      <span className={`text-xs px-2 py-0.5 rounded-full ${locked ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'}`}>
+        {locked ? 'Đã khóa' : 'Hoạt động'}
+      </span>
     </div>
   );
 }

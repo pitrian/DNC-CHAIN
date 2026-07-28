@@ -135,7 +135,7 @@ export default function Home() {
               onClick={() => handlePortalClick(portal.id)}
               className="group text-left"
             >
-              <div className="card h-full hover:shadow-xl transition-all duration-300 overflow-hidden relative">
+              <div className="card h-full hover:shadow-xl transition-all duration-300 overflow-hidden relative text-center">
                 <div className={`absolute top-0 left-0 right-0 h-2 bg-gradient-to-r ${portal.bg}`} />
 
                 <div className="pt-6 pb-4">

@@ -30,7 +30,7 @@ export default function RoleBanner({
             </svg>
           </div>
           <div>
-            <p className="text-xs text-slate-500">V\xed kết nối</p>
+            <p className="text-xs text-slate-500">Ví kết nối</p>
             <p className="text-base font-mono font-bold text-slate-100">
               {shortenAddress(address)}
             </p>

@@ -6,7 +6,7 @@ import ProtectedRoute from '../../components/ProtectedRoute';
 import IssuerLayout from '../../components/IssuerLayout';
 import RoleBanner from '../../components/RoleBanner';
 import BatchIssuance from '../../components/BatchIssuance';
-import { useIsAuthority, useIsEducation, useIsScienceTech, useDegreeContract } from '../../hooks/useContract';
+import { useIsAuthority, useIsEducation, useIsScienceTech, useDegreeContract, useDegreesByOwner, useRevokeDegree, useDegreeTokenURI, useDegreeLocked } from '../../hooks/useContract';
 
 function EducationPage() {
   const { address, isConnected } = useAccount();
@@ -29,7 +29,7 @@ function EducationPage() {
 
   useEffect(() => {
     if (isConfirmed) {
-      setStatus({ type: 'success', message: 'Giao d\u1ecbch \u0111\xe3 \u0111\u01b0\u1ee3c x\xe1c nh\u1eadn th\xe0nh c\xf4ng!' });
+      setStatus({ type: 'success', message: 'Giao dịch đã được xác nhận thành công!' });
       setIsSubmitting(false);
       setTxHash(undefined);
     }
@@ -37,14 +37,14 @@ function EducationPage() {
 
   useEffect(() => {
     if (txHash && isConfirming) {
-      setStatus({ type: 'info', message: `\u0110ang ch\u1edd x\xe1c nh\u1eadn... ${txHash.slice(0, 10)}...` });
+      setStatus({ type: 'info', message: `Đang chờ xác nhận... ${txHash.slice(0, 10)}...` });
     }
   }, [txHash, isConfirming]);
 
   const handleMint = async (hash: `0x${string}`, _file: File) => {
     setStatus(null);
     if (!recipient || !recipient.startsWith('0x') || recipient.length !== 42) {
-      setStatus({ type: 'error', message: 'Vui l\xf2ng nh\u1eadp \u0111\u1ecba ch\u1ec9 v\xed ng\u01b0\u1eddi nh\u1eadn h\u1ee3p l\u1ec7' });
+      setStatus({ type: 'error', message: 'Vui lòng nhập địa chỉ ví người nhận hợp lệ' });
       return;
     }
     setIsSubmitting(true);
@@ -53,15 +53,60 @@ function EducationPage() {
       mintDegree(recipient as `0x${string}`, metadataUri);
     } catch (error) {
       console.error(error);
-      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao d\u1ecbch th\u1ea5t b\u1ea1i'}` });
+      setStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Giao dịch thất bại'}` });
       setIsSubmitting(false);
+    }
+  };
+
+  const [lookupOwner, setLookupOwner] = useState('');
+  const [searchOwner, setSearchOwner] = useState<`0x${string}` | undefined>();
+  const { tokenIds, isLoading: isLoadingDegrees } = useDegreesByOwner(searchOwner);
+  const { burnDegree, txHash: burnTxHash } = useRevokeDegree();
+  const [burnTxHash_, setBurnTxHash_] = useState<`0x${string}` | undefined>();
+  const [burnStatus, setBurnStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
+
+  const { isLoading: isBurnConfirming, isSuccess: isBurnConfirmed } =
+    useWaitForTransactionReceipt({ hash: burnTxHash_ });
+
+  useEffect(() => {
+    if (burnTxHash) setBurnTxHash_(burnTxHash);
+  }, [burnTxHash]);
+
+  useEffect(() => {
+    if (isBurnConfirmed) {
+      setBurnStatus({ type: 'success', message: 'Đã thu hồi văn bằng thành công!' });
+      setBurnTxHash_(undefined);
+    }
+  }, [isBurnConfirmed]);
+
+  useEffect(() => {
+    if (burnTxHash_ && isBurnConfirming) {
+      setBurnStatus({ type: 'info', message: `Đang chờ xác nhận thu hồi... ${burnTxHash_.slice(0, 10)}...` });
+    }
+  }, [burnTxHash_, isBurnConfirming]);
+
+  const handleLookup = () => {
+    if (!lookupOwner.startsWith('0x') || lookupOwner.length !== 42) {
+      setBurnStatus({ type: 'error', message: 'Vui lòng nhập địa chỉ ví hợp lệ' });
+      return;
+    }
+    setBurnStatus(null);
+    setSearchOwner(lookupOwner as `0x${string}`);
+  };
+
+  const handleRevoke = async (tokenId: bigint) => {
+    setBurnStatus(null);
+    try {
+      burnDegree(tokenId);
+    } catch (error) {
+      setBurnStatus({ type: 'error', message: `${error instanceof Error ? error.message : 'Thu hồi thất bại'}` });
     }
   };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="section-title">C\u1ea5p v\u0103n b\u1eb1ng h\u1ecdc thu\u1eadt</h1>
+        <h1 className="section-title">Cấp văn bằng học thuật</h1>
         <p className="section-subtitle">Academic Degree Issuance</p>
       </div>
 
@@ -85,20 +130,20 @@ function EducationPage() {
             </svg>
           </div>
           <div>
-            <h2 className="text-lg font-bold text-slate-100">C\u1ea5p v\u0103n b\u1eb1ng h\u1ecdc thu\u1eadt</h2>
-            <p className="text-xs text-slate-400">Ph\xe1t h\xe0nh v\u0103n b\u1eb1ng t\u1ed1t nghi\u1ec7p, ch\u1ee9ng ch\u1ec9</p>
+            <h2 className="text-lg font-bold text-slate-100">Cấp văn bằng học thuật</h2>
+            <p className="text-xs text-slate-400">Phát hành văn bằng tốt nghiệp, chứng chỉ</p>
           </div>
         </div>
 
         <div className="bg-emerald-500/5 border border-emerald-500/10 rounded-lg p-3 mb-6">
           <p className="text-sm text-emerald-300/80 flex items-start space-x-2">
-            <span className="mt-0.5 shrink-0">\u2139\ufe0f</span>
-            <span>Ph\u1ea1m vi: Ch\u1ec9 c\u1ea5p b\u1eb1ng trong ph\u1ea1m vi tr\u01b0\u1eddng. Ch\u1ec9 thu h\u1ed3i \u0111\u01b0\u1ee3c v\u0103n b\u1eb1ng do m\xecnh ph\xe1t h\xe0nh.</span>
+            <span className="mt-0.5 shrink-0">ℹ️</span>
+            <span>Phạm vi: Chỉ cấp bằng trong phạm vi trường. Chỉ thu hồi được văn bằng do mình phát hành.</span>
           </p>
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-medium text-slate-300 mb-2">\u0110\u1ecba ch\u1ec9 ng\u01b0\u1eddi nh\u1eadn</label>
+          <label className="block text-sm font-medium text-slate-300 mb-2">Địa chỉ người nhận</label>
           <input
             type="text"
             value={recipient}
@@ -124,6 +169,90 @@ function EducationPage() {
           {status.message}
         </div>
       )}
+
+      <div className="mt-8 card border-emerald-500/20 animate-fade-in-up">
+        <details className="group">
+          <summary className="flex items-center space-x-2 cursor-pointer list-none">
+            <svg className="w-5 h-5 text-emerald-400 transition-transform group-open:rotate-90" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <h3 className="text-lg font-bold text-slate-100">Tra cứu & Thu hồi văn bằng</h3>
+          </summary>
+          <div className="mt-4 space-y-4">
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={lookupOwner}
+                onChange={(e) => setLookupOwner(e.target.value)}
+                placeholder="Địa chỉ ví người sở hữu (0x...)"
+                className="input-field font-mono text-sm flex-1"
+              />
+              <button
+                onClick={handleLookup}
+                disabled={isLoadingDegrees}
+                className="px-4 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg font-medium text-sm transition-colors"
+              >
+                {isLoadingDegrees ? 'Đang tra...' : 'Tra cứu'}
+              </button>
+            </div>
+
+            {searchOwner && !isLoadingDegrees && (
+              <div className="bg-slate-800/60 rounded-lg p-4">
+                {tokenIds.length === 0 ? (
+                  <p className="text-sm text-slate-400">Không tìm thấy văn bằng nào.</p>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-sm text-slate-400 mb-2">Tìm thấy {tokenIds.length} văn bằng:</p>
+                    {tokenIds.map((id) => (
+                      <DegreeRow
+                        key={id.toString()}
+                        tokenId={id}
+                        onRevoke={handleRevoke}
+                        disabled={!!burnTxHash_ && isBurnConfirming}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </details>
+      </div>
+
+      {burnStatus && (
+        <div className={`mt-4 p-4 rounded-lg text-sm animate-fade-in ${
+          burnStatus.type === 'success'
+            ? 'bg-green-500/10 text-green-300 border border-green-500/20'
+            : burnStatus.type === 'error'
+            ? 'bg-red-500/10 text-red-300 border border-red-500/20'
+            : 'bg-blue-500/10 text-blue-300 border border-blue-500/20'
+        }`}>
+          {burnStatus.message}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DegreeRow({ tokenId, onRevoke, disabled }: { tokenId: bigint; onRevoke: (id: bigint) => void; disabled: boolean }) {
+  const { uri } = useDegreeTokenURI(tokenId);
+  const { locked } = useDegreeLocked(tokenId);
+  return (
+    <div className="flex items-center justify-between bg-slate-700/30 rounded-lg px-4 py-3">
+      <div className="flex items-center space-x-3">
+        <span className="text-sm font-mono text-emerald-300">#{tokenId.toString()}</span>
+        {uri && <span className="text-xs text-slate-500 truncate max-w-[200px]">{uri}</span>}
+        <span className={`text-xs px-2 py-0.5 rounded-full ${locked ? 'bg-red-500/20 text-red-300' : 'bg-green-500/20 text-green-300'}`}>
+          {locked ? 'Đã khóa' : 'Hoạt động'}
+        </span>
+      </div>
+      <button
+        onClick={() => onRevoke(tokenId)}
+        disabled={disabled || locked}
+        className="px-3 py-1.5 bg-red-600/80 hover:bg-red-600 disabled:opacity-30 text-white text-xs font-medium rounded-lg transition-colors"
+      >
+        Thu hồi
+      </button>
     </div>
   );
 }

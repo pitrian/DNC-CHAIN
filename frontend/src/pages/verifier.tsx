@@ -27,7 +27,7 @@ function VerifierPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-2xl mb-4">
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-500/10 rounded-2xl mb-4 border border-blue-500/20">
           <img src="/assets/logo.svg" alt="DNC" className="h-10" />
         </div>
         <h1 className="section-title">Trust Verification Hub</h1>
@@ -35,7 +35,7 @@ function VerifierPage() {
           Kiểm tra tính toàn vẹn của văn bằng, chứng chỉ và hồ sơ điện tử trên
           DNC-Chain. <strong>Không cần kết nối ví</strong> — chỉ cần tải file hoặc nhập mã băm.
         </p>
-        <div className="inline-flex items-center space-x-1.5 mt-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full">
+        <div className="inline-flex items-center space-x-1.5 mt-2 bg-blue-500/5 border border-blue-500/10 text-blue-300 text-xs font-medium px-3 py-1.5 rounded-full">
           <span>🔒</span>
           <span>Zero PII On-Chain · SHA-256 Hash Anchor Only</span>
         </div>
@@ -43,10 +43,10 @@ function VerifierPage() {
 
       <div className="space-y-8">
         <div className="card">
-          <h3 className="font-semibold text-dnc-blue-900 mb-4">
+          <h3 className="font-semibold text-slate-100 mb-4">
             📄 Tải lên tài liệu để đối soát
           </h3>
-          <p className="text-sm text-gray-500 mb-4">
+          <p className="text-sm text-slate-400 mb-4">
             Kéo thả file PDF văn bằng hoặc hồ sơ điện tử. Hệ thống tự động tính
             mã băm SHA-256 và tra cứu trên blockchain.
           </p>
@@ -57,7 +57,7 @@ function VerifierPage() {
         </div>
 
         <div className="card">
-          <h3 className="font-semibold text-dnc-blue-900 mb-4">
+          <h3 className="font-semibold text-slate-100 mb-4">
             🔑 Hoặc nhập mã băm thủ công
           </h3>
           <div className="flex space-x-3">
@@ -80,8 +80,8 @@ function VerifierPage() {
 
         {isLoading && (
           <div className="card text-center py-8">
-            <div className="animate-spin h-8 w-8 border-4 border-dnc-blue-600 border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-gray-600">Đang tra cứu mã băm trên DNC-Chain...</p>
+            <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4" />
+            <p className="text-slate-400">Đang tra cứu mã băm trên DNC-Chain...</p>
           </div>
         )}
 
@@ -98,30 +98,30 @@ function VerifierPage() {
             <div className="flex flex-col items-center text-center mb-6">
               {exists && !proof?.revoked && (
                 <>
-                  <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                    <svg className="w-10 h-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mb-4 border border-green-500/20">
+                    <svg className="w-10 h-10 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-green-800">
+                  <h3 className="text-xl font-bold text-green-300">
                     ✅ Tài liệu HỢP LỆ
                   </h3>
-                  <p className="text-sm text-green-600 mt-1">
+                  <p className="text-sm text-green-400/80 mt-1">
                     Mã băm tồn tại trên DNC-Chain. Tài liệu chưa bị chỉnh sửa.
                   </p>
                 </>
               )}
               {exists && proof?.revoked && (
                 <>
-                  <div className="w-20 h-20 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                    <svg className="w-10 h-10 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-20 h-20 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4 border border-yellow-500/20">
+                    <svg className="w-10 h-10 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-yellow-800">
+                  <h3 className="text-xl font-bold text-yellow-300">
                     ⚠️ Văn bằng ĐÃ BỊ THU HỒI
                   </h3>
-                  <p className="text-sm text-yellow-600 mt-1">
+                  <p className="text-sm text-yellow-400/80 mt-1">
                     Văn bằng này đã bị cơ quan ban hành thu hồi và không còn giá
                     trị pháp lý.
                   </p>
@@ -129,15 +129,15 @@ function VerifierPage() {
               )}
               {!exists && (
                 <>
-                  <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                    <svg className="w-10 h-10 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mb-4 border border-red-500/20">
+                    <svg className="w-10 h-10 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-red-800">
+                  <h3 className="text-xl font-bold text-red-300">
                     ❌ KHÔNG TÌM THẤY
                   </h3>
-                  <p className="text-sm text-red-600 mt-1">
+                  <p className="text-sm text-red-400/80 mt-1">
                     Mã băm không tồn tại trên DNC-Chain. Tài liệu không có giá trị
                     pháp lý hoặc đã bị chỉnh sửa.
                   </p>
@@ -145,37 +145,37 @@ function VerifierPage() {
               )}
             </div>
 
-            <div className="border-t pt-4 space-y-2 text-sm">
+            <div className="border-t border-slate-700/50 pt-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">Mã băm (file hash):</span>
-                <span className="font-mono text-xs text-gray-800 break-all max-w-[50%] text-right">
+                <span className="text-slate-400">Mã băm (file hash):</span>
+                <span className="font-mono text-xs text-slate-300 break-all max-w-[50%] text-right">
                   {currentHash}
                 </span>
               </div>
               {exists && proof?.issuer && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Ký bởi:</span>
-                  <span className="font-mono text-gray-800">
+                  <span className="text-slate-400">Ký bởi:</span>
+                  <span className="font-mono text-slate-300">
                     {shortenAddress(proof.issuer)}
                   </span>
                 </div>
               )}
               {exists && proof?.timestamp && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Thời gian ký:</span>
-                  <span className="text-gray-800">
+                  <span className="text-slate-400">Thời gian ký:</span>
+                  <span className="text-slate-300">
                     {formatTimestamp(proof.timestamp)}
                   </span>
                 </div>
               )}
               {exists && (
                 <div className="flex justify-between">
-                  <span className="text-gray-500">Trạng thái:</span>
+                  <span className="text-slate-400">Trạng thái:</span>
                   <span
                     className={`font-medium ${
                       proof?.revoked
-                        ? 'text-yellow-600'
-                        : 'text-green-600'
+                        ? 'text-yellow-300'
+                        : 'text-green-300'
                     }`}
                   >
                     {proof?.revoked ? '🟡 Đã thu hồi' : '🟢 Còn hiệu lực'}

@@ -66,24 +66,24 @@ function DeAnPage() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <div className="inline-flex items-center space-x-2 bg-dnc-blue-900 text-white text-xs font-medium px-4 py-1.5 rounded-full mb-4">
+        <div className="inline-flex items-center space-x-2 bg-blue-500/10 text-blue-300 text-xs font-medium px-4 py-1.5 rounded-full mb-4 border border-blue-500/20">
           <span>⛓️</span>
           <span>DNC-Chain · Đề án 2728</span>
         </div>
-        <h1 className="text-3xl font-bold text-dnc-blue-900 mb-3 leading-tight">
+        <h1 className="text-3xl font-bold text-slate-100 mb-3 leading-tight">
           Đề án thúc đẩy ứng dụng & phát triển<br />
           công nghệ chuỗi khối (blockchain)<br />
           tại TP Đà Nẵng đến năm 2030
         </h1>
-        <div className="inline-flex flex-wrap items-center justify-center gap-3 text-sm text-gray-500">
-          <span className="bg-amber-50 text-amber-700 px-3 py-1 rounded-full font-medium">Quyết định 2728/QĐ-UBND</span>
+        <div className="inline-flex flex-wrap items-center justify-center gap-3 text-sm text-slate-400">
+          <span className="bg-amber-500/10 text-amber-300 px-3 py-1 rounded-full font-medium border border-amber-500/20">Quyết định 2728/QĐ-UBND</span>
           <span>23/6/2026</span>
           <span>UBND TP Đà Nẵng</span>
         </div>
-        <p className="mt-4 text-gray-600 max-w-3xl mx-auto">
+        <p className="mt-4 text-slate-400 max-w-3xl mx-auto">
           Xây dựng DNC-Chain — hạ tầng blockchain dùng chung của thành phố, đóng vai trò &quot;lớp tin cậy số&quot; để xác minh, kiểm chứng, truy vết và đối soát dữ liệu; từng bước triển khai 10 sản phẩm ứng dụng phục vụ chính quyền số và kinh tế dữ liệu.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-xs text-gray-400">
+        <div className="flex flex-wrap items-center justify-center gap-4 mt-4 text-xs text-slate-500">
           <span>📜 Cơ quan ban hành: UBND TP Đà Nẵng</span>
           <span>✍️ Người ký: Hồ Quang Bửu (Phó Chủ tịch)</span>
           <span>🏛️ Chủ trì: Sở Khoa học & Công nghệ</span>
@@ -99,124 +99,124 @@ function DeAnPage() {
           { value: '30+', label: 'Doanh nghiệp tham gia hệ sinh thái' },
         ].map(s => (
           <div key={s.label} className="card text-center">
-            <p className="text-3xl font-bold text-dnc-blue-700">{s.value}</p>
-            <p className="text-xs text-gray-500 mt-1">{s.label}</p>
+            <p className="text-3xl font-bold text-blue-400">{s.value}</p>
+            <p className="text-xs text-slate-400 mt-1">{s.label}</p>
           </div>
         ))}
       </div>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-4">Đề án này là gì?</h2>
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Đề án này là gì?</h2>
         <div className="card space-y-4">
-          <p className="text-gray-700">
+          <p className="text-slate-300">
             UBND TP Đà Nẵng ban hành đề án để đưa công nghệ blockchain vào phục vụ quản lý nhà nước. Đây là văn bản khung định hướng đến 2030 — đặt nền móng hạ tầng và lộ trình.
           </p>
           <div className="grid md:grid-cols-3 gap-4 pt-2">
-            <div className="bg-blue-50 rounded-xl p-4">
-              <p className="font-semibold text-dnc-blue-800 mb-1">🎯 Vì sao làm?</p>
-              <p className="text-sm text-gray-600">Triển khai NQ 57-NQ/TW, Chiến lược blockchain quốc gia và Đề án CĐS của Đà Nẵng. Mục tiêu: tăng độ tin cậy của dữ liệu số.</p>
+            <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4">
+              <p className="font-semibold text-slate-100 mb-1">🎯 Vì sao làm?</p>
+              <p className="text-sm text-slate-400">Triển khai NQ 57-NQ/TW, Chiến lược blockchain quốc gia và Đề án CĐS của Đà Nẵng. Mục tiêu: tăng độ tin cậy của dữ liệu số.</p>
             </div>
-            <div className="bg-blue-50 rounded-xl p-4">
-              <p className="font-semibold text-dnc-blue-800 mb-1">⛓️ Làm cái gì?</p>
-              <p className="text-sm text-gray-600">Xây hạ tầng blockchain dùng chung DNC-Chain làm &quot;lớp tin cậy số&quot;, cộng với 07 mô đun nền tảng và 10 sản phẩm ứng dụng theo 4 tầng cấp độ.</p>
+            <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4">
+              <p className="font-semibold text-slate-100 mb-1">⛓️ Làm cái gì?</p>
+              <p className="text-sm text-slate-400">Xây hạ tầng blockchain dùng chung DNC-Chain làm &quot;lớp tin cậy số&quot;, cộng với 07 mô đun nền tảng và 10 sản phẩm ứng dụng theo 4 tầng cấp độ.</p>
             </div>
-            <div className="bg-blue-50 rounded-xl p-4">
-              <p className="font-semibold text-dnc-blue-800 mb-1">🛡️ Nguyên tắc cốt lõi</p>
-              <p className="text-sm text-gray-600">Blockchain chỉ ghi &quot;bằng chứng xác minh&quot;, không lưu hồ sơ gốc. Triển khai theo cấp độ, đúng thẩm quyền, bảo đảm an toàn — an ninh mạng.</p>
+            <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4">
+              <p className="font-semibold text-slate-100 mb-1">🛡️ Nguyên tắc cốt lõi</p>
+              <p className="text-sm text-slate-400">Blockchain chỉ ghi &quot;bằng chứng xác minh&quot;, không lưu hồ sơ gốc. Triển khai theo cấp độ, đúng thẩm quyền, bảo đảm an toàn — an ninh mạng.</p>
             </div>
           </div>
         </div>
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-4">Căn cứ pháp lý</h2>
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Căn cứ pháp lý</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {legalBases.map(lb => (
-            <div key={lb.id} className="card border-l-4 border-dnc-blue-500">
-              <p className="text-xs font-bold text-dnc-blue-600 uppercase tracking-wide">{lb.id}</p>
-              <p className="font-medium text-dnc-blue-900 text-sm mt-1">{lb.title}</p>
-              <p className="text-xs text-gray-500 mt-1">{lb.desc}</p>
+            <div key={lb.id} className="card border-l-4 border-blue-500">
+              <p className="text-xs font-bold text-blue-400 uppercase tracking-wide">{lb.id}</p>
+              <p className="font-medium text-slate-100 text-sm mt-1">{lb.title}</p>
+              <p className="text-xs text-slate-400 mt-1">{lb.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-2">Đích đến năm 2030</h2>
-        <p className="text-gray-600 mb-4">Mục tiêu cụ thể của đề án</p>
+        <h2 className="text-xl font-bold text-slate-100 mb-2">Đích đến năm 2030</h2>
+        <p className="text-slate-400 mb-4">Mục tiêu cụ thể của đề án</p>
         <div className="grid md:grid-cols-4 gap-4">
           <div className="card text-center">
             <p className="text-2xl mb-2">🏗️</p>
-            <p className="font-semibold text-dnc-blue-900 text-sm">01 hạ tầng + 07 mô đun</p>
-            <p className="text-xs text-gray-500 mt-1">Xây dựng & vận hành DNC-Chain, ưu tiên nền tảng Layer-1 của Việt Nam</p>
+            <p className="font-semibold text-slate-100 text-sm">01 hạ tầng + 07 mô đun</p>
+            <p className="text-xs text-slate-400 mt-1">Xây dựng & vận hành DNC-Chain, ưu tiên nền tảng Layer-1 của Việt Nam</p>
           </div>
           <div className="card text-center">
             <p className="text-2xl mb-2">📦</p>
-            <p className="font-semibold text-dnc-blue-900 text-sm">10 sản phẩm ứng dụng</p>
-            <p className="text-xs text-gray-500 mt-1">Đến 2030, toàn bộ SP1→SP10 được triển khai theo đúng cấp độ</p>
+            <p className="font-semibold text-slate-100 text-sm">10 sản phẩm ứng dụng</p>
+            <p className="text-xs text-slate-400 mt-1">Đến 2030, toàn bộ SP1→SP10 được triển khai theo đúng cấp độ</p>
           </div>
           <div className="card text-center">
             <p className="text-2xl mb-2">👥</p>
-            <p className="font-semibold text-dnc-blue-900 text-sm">≥ 1.000 nhân lực</p>
-            <p className="text-xs text-gray-500 mt-1">Tối thiểu 1.000 nhân lực có kỹ năng blockchain</p>
+            <p className="font-semibold text-slate-100 text-sm">≥ 1.000 nhân lực</p>
+            <p className="text-xs text-slate-400 mt-1">Tối thiểu 1.000 nhân lực có kỹ năng blockchain</p>
           </div>
           <div className="card text-center">
             <p className="text-2xl mb-2">🤝</p>
-            <p className="font-semibold text-dnc-blue-900 text-sm">≥ 30 doanh nghiệp</p>
-            <p className="text-xs text-gray-500 mt-1">Tham gia cung cấp giải pháp & triển khai nhiệm vụ đặt hàng</p>
+            <p className="font-semibold text-slate-100 text-sm">≥ 30 doanh nghiệp</p>
+            <p className="text-xs text-slate-400 mt-1">Tham gia cung cấp giải pháp & triển khai nhiệm vụ đặt hàng</p>
           </div>
         </div>
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-4">Mô hình kiến trúc — 5 lớp</h2>
-        <p className="text-gray-600 mb-4">DNC-Chain là chuỗi khối lớp-1 có cấp phép (permissioned), công nghệ lõi Permissioned Ethereum.</p>
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Mô hình kiến trúc — 5 lớp</h2>
+        <p className="text-slate-400 mb-4">DNC-Chain là chuỗi khối lớp-1 có cấp phép (permissioned), công nghệ lõi Permissioned Ethereum.</p>
         <div className="space-y-3">
           {[
-            { layer: '1', title: 'Hệ thống nguồn & cơ sở dữ liệu', desc: 'Các cơ quan tạo lập, lưu trữ, quản lý dữ liệu nghiệp vụ gốc — chịu trách nhiệm pháp lý về dữ liệu.', color: 'bg-gray-100 border-gray-300', arrow: '↓' },
-            { layer: '2', title: 'Lớp tích hợp & chia sẻ dữ liệu (LGSP)', desc: 'Kết nối, điều phối, chia sẻ dữ liệu giữa các hệ thống qua nền tảng tích hợp của thành phố.', color: 'bg-blue-50 border-blue-200', arrow: '↓' },
-            { layer: '3', title: 'Lớp dữ liệu & nền tảng lõi — DNC-Chain', desc: 'Ghi nhận bằng chứng xác minh, hỗ trợ kiểm chứng độc lập, truy vết & đối soát. Dư địa mở rộng lý thuyết 58.000-100.000 TPS.', color: 'bg-dnc-blue-100 border-dnc-blue-300', arrow: '↓' },
-            { layer: '4', title: '07 mô đun nền tảng dùng chung', desc: 'Cầu nối đa chuỗi · Tạo & đối soát bằng chứng · Quản lý khóa & phân quyền · Quản lý giao dịch & token · Quản lý smart contract · Ứng dụng & marketplace · Hub làm sạch dữ liệu.', color: 'bg-purple-50 border-purple-200', arrow: '↓' },
-            { layer: '5', title: 'Lớp ứng dụng & nghiệp vụ dùng chung', desc: '10 sản phẩm SP1-SP10 phục vụ xác minh dữ liệu, quản lý đô thị, kinh tế dữ liệu & tài chính số.', color: 'bg-green-50 border-green-200', arrow: null },
+            { layer: '1', title: 'Hệ thống nguồn & cơ sở dữ liệu', desc: 'Các cơ quan tạo lập, lưu trữ, quản lý dữ liệu nghiệp vụ gốc — chịu trách nhiệm pháp lý về dữ liệu.', color: 'border-slate-600', bg: 'bg-slate-800/30' },
+            { layer: '2', title: 'Lớp tích hợp & chia sẻ dữ liệu (LGSP)', desc: 'Kết nối, điều phối, chia sẻ dữ liệu giữa các hệ thống qua nền tảng tích hợp của thành phố.', color: 'border-blue-500/30', bg: 'bg-blue-500/5' },
+            { layer: '3', title: 'Lớp dữ liệu & nền tảng lõi — DNC-Chain', desc: 'Ghi nhận bằng chứng xác minh, hỗ trợ kiểm chứng độc lập, truy vết & đối soát. Dư địa mở rộng lý thuyết 58.000-100.000 TPS.', color: 'border-blue-500/50', bg: 'bg-blue-500/10' },
+            { layer: '4', title: '07 mô đun nền tảng dùng chung', desc: 'Cầu nối đa chuỗi · Tạo & đối soát bằng chứng · Quản lý khóa & phân quyền · Quản lý giao dịch & token · Quản lý smart contract · Ứng dụng & marketplace · Hub làm sạch dữ liệu.', color: 'border-purple-500/30', bg: 'bg-purple-500/5' },
+            { layer: '5', title: 'Lớp ứng dụng & nghiệp vụ dùng chung', desc: '10 sản phẩm SP1-SP10 phục vụ xác minh dữ liệu, quản lý đô thị, kinh tế dữ liệu & tài chính số.', color: 'border-green-500/30', bg: 'bg-green-500/5' },
           ].map(l => (
-            <div key={l.layer} className={`card border-2 ${l.color} relative`}>
+            <div key={l.layer} className={`card border-2 ${l.color} ${l.bg}`}>
               <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center font-bold text-gray-600 shrink-0">
+                <div className="w-10 h-10 rounded-full bg-slate-700 border-2 border-slate-600 flex items-center justify-center font-bold text-slate-300 shrink-0">
                   {l.layer}
                 </div>
                 <div>
-                  <p className="font-semibold text-dnc-blue-900">{l.title}</p>
-                  <p className="text-sm text-gray-600 mt-1">{l.desc}</p>
+                  <p className="font-semibold text-slate-100">{l.title}</p>
+                  <p className="text-sm text-slate-400 mt-1">{l.desc}</p>
                 </div>
               </div>
-              {l.arrow && <p className="text-center text-gray-400 text-xl mt-2">{l.arrow}</p>}
+              {l.layer !== '5' && <p className="text-center text-slate-600 text-xl mt-2">↓</p>}
             </div>
           ))}
         </div>
-        <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800">
+        <div className="mt-4 p-4 bg-amber-500/5 border border-amber-500/10 rounded-xl text-sm text-amber-300">
           💡 Blockchain chỉ ghi &quot;dấu vân tay&quot; (hash/bằng chứng) của hồ sơ, không lưu nội dung gốc. Khi cần kiểm tra, hệ thống đối chiếu dữ liệu hiện tại với bằng chứng đã ghi để khẳng định tính toàn vẹn — chống sửa, chống giả mạo.
         </div>
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-2">10 sản phẩm theo 4 tầng cấp độ</h2>
-        <p className="text-gray-600 mb-4">Triển khai theo thứ tự ưu tiên: tầng nào &quot;chín&quot; trước làm trước.</p>
+        <h2 className="text-xl font-bold text-slate-100 mb-2">10 sản phẩm theo 4 tầng cấp độ</h2>
+        <p className="text-slate-400 mb-4">Triển khai theo thứ tự ưu tiên: tầng nào &quot;chín&quot; trước làm trước.</p>
         <div className="space-y-6">
           {tiers.map(tier => (
-            <div key={tier.label} className="card border-l-4 border-dnc-blue-600">
+            <div key={tier.label} className="card border-l-4 border-blue-500">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-dnc-blue-900">{tier.label}</h3>
-                <span className="text-xs bg-dnc-blue-100 text-dnc-blue-700 px-3 py-1 rounded-full font-medium">{tier.period}</span>
+                <h3 className="font-semibold text-slate-100">{tier.label}</h3>
+                <span className="text-xs bg-blue-500/10 text-blue-300 px-3 py-1 rounded-full font-medium border border-blue-500/20">{tier.period}</span>
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 {tier.products.map(p => (
-                  <div key={p.id} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                  <div key={p.id} className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50">
                     <div className="flex items-start justify-between mb-2">
-                      <span className="text-xs font-bold bg-dnc-blue-600 text-white px-2 py-0.5 rounded">{p.id}</span>
+                      <span className="text-xs font-bold bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded">{p.id}</span>
                     </div>
-                    <p className="font-medium text-dnc-blue-900 text-sm mb-1">{p.name}</p>
-                    <p className="text-xs text-gray-600 mb-2">{p.desc}</p>
-                    <p className="text-xs text-gray-400">🏛️ Chủ trì: {p.lead}</p>
+                    <p className="font-medium text-slate-100 text-sm mb-1">{p.name}</p>
+                    <p className="text-xs text-slate-400 mb-2">{p.desc}</p>
+                    <p className="text-xs text-slate-500">🏛️ Chủ trì: {p.lead}</p>
                   </div>
                 ))}
               </div>
@@ -226,25 +226,25 @@ function DeAnPage() {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-2">Lộ trình triển khai</h2>
-        <p className="text-gray-600 mb-4">Đi từng bước — không &quot;làm đồng loạt&quot;</p>
+        <h2 className="text-xl font-bold text-slate-100 mb-2">Lộ trình triển khai</h2>
+        <p className="text-slate-400 mb-4">Đi từng bước — không &quot;làm đồng loạt&quot;</p>
         <div className="space-y-4">
           {phases.map((phase, i) => (
-            <div key={phase.period} className="card border-l-4 border-dnc-blue-600 relative">
+            <div key={phase.period} className="card border-l-4 border-blue-500 relative">
               <div className="flex items-start space-x-4">
-                <div className="w-10 h-10 rounded-full bg-dnc-blue-600 text-white flex items-center justify-center font-bold shrink-0">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 text-blue-300 border border-blue-500/30 flex items-center justify-center font-bold shrink-0">
                   T{i + 1}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-dnc-blue-900">{phase.title}</h3>
-                    <span className="text-xs text-gray-400">{phase.period}</span>
+                    <h3 className="font-semibold text-slate-100">{phase.title}</h3>
+                    <span className="text-xs text-slate-500">{phase.period}</span>
                   </div>
-                  <p className="text-sm text-dnc-blue-600 font-medium mt-0.5">{phase.desc}</p>
+                  <p className="text-sm text-blue-300 font-medium mt-0.5">{phase.desc}</p>
                   <ul className="mt-2 space-y-1">
                     {phase.items.map((item, idx) => (
-                      <li key={idx} className="text-sm text-gray-600 flex items-start space-x-2">
-                        <span className="text-dnc-blue-500 mt-0.5">•</span>
+                      <li key={idx} className="text-sm text-slate-400 flex items-start space-x-2">
+                        <span className="text-blue-400 mt-0.5">•</span>
                         <span>{item}</span>
                       </li>
                     ))}
@@ -257,38 +257,38 @@ function DeAnPage() {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-4">Nguồn lực tài chính</h2>
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Nguồn lực tài chính</h2>
         <div className="grid md:grid-cols-2 gap-6">
           <div className="card text-center">
-            <p className="text-5xl font-bold text-dnc-blue-700">268 tỷ</p>
-            <p className="text-sm text-gray-500 mt-2">VNĐ · 2026-2030</p>
+            <p className="text-5xl font-bold text-blue-400">268 tỷ</p>
+            <p className="text-sm text-slate-400 mt-2">VNĐ · 2026-2030</p>
           </div>
           <div className="space-y-3">
-            <div className="card bg-blue-50 border-blue-100">
+            <div className="card bg-blue-500/5 border-blue-500/10">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-dnc-blue-900">Ngân sách thành phố</p>
-                  <p className="text-xs text-gray-600">Thể chế, hạ tầng DNC-Chain, dữ liệu/ATTT, sản phẩm Tầng 1&2</p>
+                  <p className="font-semibold text-slate-100">Ngân sách thành phố</p>
+                  <p className="text-xs text-slate-400">Thể chế, hạ tầng DNC-Chain, dữ liệu/ATTT, sản phẩm Tầng 1&2</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-bold text-dnc-blue-700">182,49 tỷ</p>
-                  <p className="text-xs text-gray-400">68,1%</p>
+                  <p className="text-xl font-bold text-blue-400">182,49 tỷ</p>
+                  <p className="text-xs text-slate-500">68,1%</p>
                 </div>
               </div>
             </div>
-            <div className="card bg-green-50 border-green-100">
+            <div className="card bg-green-500/5 border-green-500/10">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-dnc-blue-900">Doanh nghiệp & nguồn khác</p>
-                  <p className="text-xs text-gray-600">Hạ tầng kỹ thuật, vận hành thương mại SP6, SP7 và Tầng 4</p>
+                  <p className="font-semibold text-slate-100">Doanh nghiệp & nguồn khác</p>
+                  <p className="text-xs text-slate-400">Hạ tầng kỹ thuật, vận hành thương mại SP6, SP7 và Tầng 4</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-bold text-green-700">85,51 tỷ</p>
-                  <p className="text-xs text-gray-400">31,9%</p>
+                  <p className="text-xl font-bold text-green-400">85,51 tỷ</p>
+                  <p className="text-xs text-slate-500">31,9%</p>
                 </div>
               </div>
             </div>
-            <p className="text-xs text-amber-700 bg-amber-50 rounded-lg p-3">
+            <p className="text-xs text-amber-300 bg-amber-500/5 border border-amber-500/10 rounded-lg p-3">
               🏦 Với Tầng 4, ngân sách nhà nước chỉ chi cho quản lý, giám sát, tích hợp kỹ thuật, tuân thủ & quản trị rủi ro — không đầu tư phần thương mại của doanh nghiệp.
             </p>
           </div>
@@ -296,12 +296,12 @@ function DeAnPage() {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-4">Tổ chức thực hiện</h2>
-        <p className="text-gray-600 mb-4">20 nhóm chủ thể. Sở Khoa học & Công nghệ là đầu mối chủ trì.</p>
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Tổ chức thực hiện</h2>
+        <p className="text-slate-400 mb-4">20 nhóm chủ thể. Sở Khoa học & Công nghệ là đầu mối chủ trì.</p>
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="card border-l-4 border-dnc-blue-600">
-            <p className="text-sm font-semibold text-dnc-blue-900">🧭 Sở Khoa học & Công nghệ</p>
-            <ul className="mt-2 space-y-1 text-xs text-gray-600">
+          <div className="card border-l-4 border-blue-500">
+            <p className="text-sm font-semibold text-slate-100">🧭 Sở Khoa học & Công nghệ</p>
+            <ul className="mt-2 space-y-1 text-xs text-slate-400">
               <li>• Chủ trì phổ biến, hướng dẫn, triển khai toàn đề án</li>
               <li>• Chủ trì SP1, SP3, SP5, SP6, SP8</li>
               <li>• Vận hành hạ tầng DNC-Chain</li>
@@ -309,8 +309,8 @@ function DeAnPage() {
             </ul>
           </div>
           <div className="card border-l-4 border-green-500">
-            <p className="text-sm font-semibold text-dnc-blue-900">🏢 Các Sở chuyên ngành</p>
-            <ul className="mt-2 space-y-1 text-xs text-gray-600">
+            <p className="text-sm font-semibold text-slate-100">🏢 Các Sở chuyên ngành</p>
+            <ul className="mt-2 space-y-1 text-xs text-slate-400">
               <li>• Sở GD&ĐT — chủ trì SP2 (văn bằng, chứng chỉ)</li>
               <li>• Sở Y tế — chủ trì SP4 (hồ sơ y tế)</li>
               <li>• Sở VH-TT&DL — chủ trì SP7 (City Loyalty)</li>
@@ -318,16 +318,16 @@ function DeAnPage() {
             </ul>
           </div>
           <div className="card border-l-4 border-amber-500">
-            <p className="text-sm font-semibold text-dnc-blue-900">💹 Cơ quan điều hành IFC · NHNN KV9</p>
-            <ul className="mt-2 space-y-1 text-xs text-gray-600">
+            <p className="text-sm font-semibold text-slate-100">💹 Cơ quan điều hành IFC · NHNN KV9</p>
+            <ul className="mt-2 space-y-1 text-xs text-slate-400">
               <li>• IFC Đà Nẵng chủ trì SP9, SP10</li>
               <li>• NHNN khu vực 9 giám sát rủi ro thanh toán</li>
               <li>• Công an TP — bảo đảm an ninh mạng, truy vết on-chain</li>
             </ul>
           </div>
-          <div className="card border-l-4 border-purple-500 bg-purple-50/50">
-            <p className="text-sm font-semibold text-dnc-blue-900">🏘️ UBND các phường, xã, đặc khu</p>
-            <ul className="mt-2 space-y-1 text-xs text-gray-600">
+          <div className="card border-l-4 border-purple-500 bg-purple-500/5">
+            <p className="text-sm font-semibold text-slate-100">🏘️ UBND các phường, xã, đặc khu</p>
+            <ul className="mt-2 space-y-1 text-xs text-slate-400">
               <li>• Tổ chức triển khai nhiệm vụ theo phân công</li>
               <li>• Rà soát, chuẩn hóa dữ liệu hệ thống nguồn</li>
               <li>• Phối hợp tích hợp, kiểm thử, vận hành</li>
@@ -338,40 +338,40 @@ function DeAnPage() {
       </section>
 
       <section className="mb-12">
-        <h2 className="text-xl font-bold text-dnc-blue-900 mb-4">Rủi ro được quản lý</h2>
+        <h2 className="text-xl font-bold text-slate-100 mb-4">Rủi ro được quản lý</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {riskGroups.map(r => (
             <div key={r.label} className="card">
-              <p className="font-semibold text-dnc-blue-900 mb-1">{r.icon} {r.label}</p>
-              <p className="text-xs text-gray-600">{r.items}</p>
+              <p className="font-semibold text-slate-100 mb-1">{r.icon} {r.label}</p>
+              <p className="text-xs text-slate-400">{r.items}</p>
             </div>
           ))}
         </div>
       </section>
 
       <section>
-        <div className="card border-2 border-amber-200 bg-amber-50/50">
-          <h2 className="text-lg font-bold text-dnc-blue-900 mb-3">Góc nhìn chuyên viên CNTT-CĐS xã</h2>
-          <p className="text-sm text-amber-800 font-medium mb-3">Việc này có phải của xã làm ngay không?</p>
-          <div className="space-y-3 text-sm text-gray-700">
+        <div className="card border-2 border-amber-500/20 bg-amber-500/5">
+          <h2 className="text-lg font-bold text-slate-100 mb-3">Góc nhìn chuyên viên CNTT-CĐS xã</h2>
+          <p className="text-sm text-amber-300 font-medium mb-3">Việc này có phải của xã làm ngay không?</p>
+          <div className="space-y-3 text-sm text-slate-300">
             <p>Phần lớn là việc của Sở KH&CN và các Sở ngành — không phải việc xã làm ngay. Toàn bộ 10 sản phẩm đều do Sở/cơ quan thành phố chủ trì. Giai đoạn đầu (2026-2027) chỉ chạy SP1, SP2 do Sở KH&CN và Sở GD&ĐT cầm. Cấp xã chỉ xuất hiện ở vai trò phối hợp, rõ nhất là SP3 (Digital Twin) tại khu vực thí điểm — thuộc Tầng 2, giai đoạn 2028-2030.</p>
-            <div className="bg-white rounded-xl p-4 border border-amber-100">
-              <p className="font-semibold text-green-700 mb-2">✅ Việc nên làm bây giờ (nhẹ, đúng vai)</p>
-              <ul className="space-y-1 text-gray-600">
+            <div className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50">
+              <p className="font-semibold text-green-400 mb-2">✅ Việc nên làm bây giờ (nhẹ, đúng vai)</p>
+              <ul className="space-y-1 text-slate-400">
                 <li>• Đọc & nắm tinh thần đề án, lưu hồ sơ để tra cứu</li>
                 <li>• Tham mưu lãnh đạo xã: ghi nhận, theo dõi — chưa phát sinh nhiệm vụ/kinh phí riêng cho xã</li>
                 <li>• Rà soát sơ bộ chất lượng dữ liệu nghiệp vụ của xã để sẵn sàng khi có yêu cầu</li>
               </ul>
             </div>
-            <div className="bg-white rounded-xl p-4 border border-amber-100">
-              <p className="font-semibold text-amber-700 mb-2">⏳ Chỉ phát sinh khi có yêu cầu cụ thể</p>
-              <ul className="space-y-1 text-gray-600">
+            <div className="bg-slate-800/60 rounded-xl p-4 border border-slate-700/50">
+              <p className="font-semibold text-amber-300 mb-2">⏳ Chỉ phát sinh khi có yêu cầu cụ thể</p>
+              <ul className="space-y-1 text-slate-400">
                 <li>• Bố trí đầu mối phối hợp khi Sở KH&CN triển khai tích hợp dữ liệu nguồn</li>
                 <li>• Chuẩn hóa dữ liệu hệ thống nguồn để kết nối DNC-Chain</li>
                 <li>• Tham gia nếu xã nằm trong khu vực thí điểm SP3 giai đoạn 2028-2030</li>
               </ul>
             </div>
-            <div className="bg-dnc-blue-50 rounded-xl p-4 border border-dnc-blue-100 text-dnc-blue-800 font-medium">
+            <div className="bg-blue-500/5 border border-blue-500/10 rounded-xl p-4 text-blue-300 font-medium">
               📌 Kết luận: Với văn bản 2728, việc của xã hiện nay là tham mưu để theo dõi — không có đầu việc bắt buộc phải xử lý trước hạn 29/6/2026 ngoài việc nắm nội dung & báo cáo lãnh đạo. Các nghĩa vụ thực chất (chuẩn hóa dữ liệu, phối hợp tích hợp) chỉ kích hoạt khi thành phố/Sở KH&CN có kế hoạch & hướng dẫn cụ thể.
             </div>
           </div>

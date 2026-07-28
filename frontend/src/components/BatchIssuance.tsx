@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react';
 import { useWaitForTransactionReceipt } from 'wagmi';
 import { useDegreeContract } from '../hooks/useContract';
 
-export default function BatchIssuance({ metadataType }: { metadataType: string }) {
+export default function BatchIssuance({ metadataType, accent = 'emerald' }: { metadataType: string; accent?: 'emerald' | 'amber' }) {
+  const btnColors = accent === 'amber'
+    ? 'bg-amber-500 text-black font-semibold hover:bg-amber-400'
+    : 'bg-emerald-600 text-white hover:bg-emerald-700';
+  const dotColors = accent === 'amber' ? 'bg-amber-500' : 'bg-emerald-500';
+  const barColors = accent === 'amber' ? 'bg-amber-500' : 'bg-emerald-600';
   const { mintDegree, txHash } = useDegreeContract();
   const [input, setInput] = useState('');
   const [status, setStatus] = useState<{ type: 'success' | 'error' | 'info'; message: string } | null>(null);
@@ -24,7 +29,7 @@ export default function BatchIssuance({ metadataType }: { metadataType: string }
     if (!batchStatus.running || !addresses.length) return;
     if (currentIndex >= addresses.length) {
       setBatchStatus(prev => ({ ...prev, running: false }));
-      setStatus({ type: 'success', message: `Batch ho\xe0n t\u1ea5t: ${batchStatus.completed} th\xe0nh c\xf4ng, ${batchStatus.failed} th\u1ea5t b\u1ea1i` });
+      setStatus({ type: 'success', message: `Batch hoàn tất: ${batchStatus.completed} thành công, ${batchStatus.failed} thất bại` });
       return;
     }
     if (!isConfirming && !txHash) {
@@ -67,12 +72,12 @@ export default function BatchIssuance({ metadataType }: { metadataType: string }
     const parsed = getAddresses(input);
     setAddresses(parsed);
     if (!parsed.length) {
-      setStatus({ type: 'error', message: 'Kh\xf4ng t\xecm th\u1ea5y \u0111\u1ecba ch\u1ec9 h\u1ee3p l\u1ec7' });
+      setStatus({ type: 'error', message: 'Không tìm thấy địa chỉ hợp lệ' });
       return;
     }
     setBatchStatus({ total: parsed.length, completed: 0, failed: 0, running: true });
     setCurrentIndex(0);
-    setStatus({ type: 'info', message: `Batch mint ${parsed.length} v\u0103n b\u1eb1ng...` });
+    setStatus({ type: 'info', message: `Batch mint ${parsed.length} văn bằng...` });
   };
 
   const preview = getAddresses(input);
@@ -80,11 +85,11 @@ export default function BatchIssuance({ metadataType }: { metadataType: string }
   return (
     <div className="mt-6 border-t border-slate-700/50 pt-6">
       <div className="flex items-center space-x-2 mb-4">
-        <div className="w-3 h-3 bg-emerald-500 rounded-full" />
-        <h3 className="font-semibold text-slate-100">Batch Issuance \xb7 H\xe0ng lo\u1ea1t</h3>
+        <div className={`w-3 h-3 ${dotColors} rounded-full`} />
+        <h3 className="font-semibold text-slate-100">Batch Issuance · Hàng loạt</h3>
       </div>
       <p className="text-sm text-slate-400 mb-4">
-        D\xe1n danh s\xe1ch \u0111\u1ecba ch\u1ec9 (m\u1ed7i d\xf2ng m\u1ed9t \u0111\u1ecba ch\u1ec9) ho\u1eb7c upload file CSV.
+        Dán danh sách địa chỉ (mỗi dòng một địa chỉ) hoặc upload file CSV.
       </p>
 
       <textarea
@@ -100,20 +105,20 @@ export default function BatchIssuance({ metadataType }: { metadataType: string }
           Upload CSV
           <input type="file" accept=".csv,.txt" onChange={handleFileUpload} className="hidden" />
         </label>
-        <span className="text-xs text-slate-500">CSV (c\u1ed9t "address") ho\u1eb7c TXT</span>
+        <span className="text-xs text-slate-500">CSV (cột "address") hoặc TXT</span>
       </div>
 
       {preview.length > 0 && (
         <div className="mb-4 p-3 bg-slate-800/60 rounded-lg">
           <p className="text-sm font-medium text-slate-300 mb-2">
-            {preview.length} \u0111\u1ecba ch\u1ec9:
+            {preview.length} địa chỉ:
           </p>
           <div className="max-h-24 overflow-y-auto space-y-1">
             {preview.slice(0, 20).map((addr, i) => (
               <div key={i} className="text-xs font-mono text-slate-400">{addr}</div>
             ))}
             {preview.length > 20 && (
-              <div className="text-xs text-slate-500">...v\xe0 {preview.length - 20} \u0111\u1ecba ch\u1ec9 kh\xe1c</div>
+              <div className="text-xs text-slate-500">...và {preview.length - 20} địa chỉ khác</div>
             )}
           </div>
         </div>
@@ -122,12 +127,12 @@ export default function BatchIssuance({ metadataType }: { metadataType: string }
       {batchStatus.running && (
         <div className="mb-4">
           <div className="flex justify-between text-sm mb-1">
-            <span className="text-slate-400">Ti\u1ebfn \u0111\u1ed9:</span>
+            <span className="text-slate-400">Tiến độ:</span>
             <span className="font-medium text-slate-100">{batchStatus.completed + batchStatus.failed} / {batchStatus.total}</span>
           </div>
           <div className="w-full bg-slate-700 rounded-full h-2">
             <div
-              className="bg-emerald-600 h-2 rounded-full transition-all duration-300"
+              className={`${barColors} h-2 rounded-full transition-all duration-300`}
               style={{ width: `${((batchStatus.completed + batchStatus.failed) / batchStatus.total) * 100}%` }}
             />
           </div>
@@ -141,9 +146,9 @@ export default function BatchIssuance({ metadataType }: { metadataType: string }
       <button
         onClick={handleStartBatch}
         disabled={!preview.length || batchStatus.running}
-        className="w-full py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+        className={`w-full py-2 ${btnColors} rounded-lg text-sm font-medium disabled:opacity-50 transition-colors`}
       >
-        {batchStatus.running ? `\u0110ang mint (${batchStatus.completed + batchStatus.failed}/${batchStatus.total})...` : 'Batch Mint'}
+        {batchStatus.running ? `Đang mint (${batchStatus.completed + batchStatus.failed}/${batchStatus.total})...` : 'Batch Mint'}
       </button>
 
       {status && (
