@@ -485,7 +485,8 @@ School Staff (mint degrees for students)
 - [x] Analytics dashboard with Recharts
 - [x] Circuit Breaker (Pausable) for emergency stop
 - [x] Batch issuance (CSV/text upload)
-- [x] Revocation management UI
+- [x] Role-based issuer portal (education/science/authority pages)
+- [x] Revocation management UI (lookup by owner/hash + revoke)
 - [x] HeroSection with animations (Framer Motion)
 - [x] Dark theme guide page
 - [x] Deploy to local Anvil
@@ -536,7 +537,11 @@ dnc-certitrust/
 │   └── src/
 │       ├── pages/
 │       │   ├── index.tsx          # Landing page (HeroSection + nav cards)
-│       │   ├── issuer.tsx         # Authority portal (mint + batch issuance)
+│       │   ├── issuer/
+│       │   │   ├── index.tsx      # Issuer hub (role selection)
+│       │   │   ├── education.tsx  # Education role — mint degree + lookup/revoke
+│       │   │   ├── science.tsx    # Science & Tech role — register proof + lookup/revoke
+│       │   │   └── authority.tsx  # Authority role — all features + lookup/revoke
 │       │   ├── verifier.tsx       # Public verification portal
 │       │   ├── dashboard.tsx      # Governance dashboard (RBAC + pause + revoke)
 │       │   ├── wallet.tsx         # Citizen SBT wallet
@@ -553,9 +558,18 @@ dnc-certitrust/
 │       │   ├── EventStream.tsx    # Real-time event viewer
 │       │   ├── WalletConnect.tsx  # Wallet connection button
 │       │   ├── FileUploader.tsx   # File hash upload component
-│       │   └── DegreeCard.tsx     # Degree info card
+│       │   ├── DegreeCard.tsx     # Degree info card
+│       │   ├── BatchIssuance.tsx  # CSV/text batch issuance
+│       │   ├── IssuerLayout.tsx   # Dynamic accent layout per role
+│       │   ├── ProtectedRoute.tsx # Granular role-based route guard
+│       │   ├── RoleBadge.tsx      # Role indicator badge
+│       │   ├── RoleBanner.tsx     # User roles summary banner
+│       │   ├── PublicLayout.tsx   # Public site layout
+│       │   ├── CitizenLayout.tsx  # Citizen wallet layout
+│       │   ├── AdminLayout.tsx    # Admin dashboard layout
+│       │   └── ProofRegistryCard.tsx # Proof lookup card (dashboard)
 │       └── hooks/
-│           ├── useContract.ts     # Contract ABIs + hooks (pause, revoke, etc.)
+│           ├── useContract.ts     # Contract ABIs + hooks (pause, revoke, degrees, proofs)
 │           ├── useAnalyticsData.ts # Analytics event polling
 │           └── useEventPoller.ts  # Generic event poller
 ├── besu-network/                 # Hyperledger Besu QBFT (Phase 2)
@@ -565,7 +579,9 @@ dnc-certitrust/
 ├── docs/                         # Documentation
 │   ├── adr/                      # Architecture Decision Records
 │   ├── pitch-deck.md             # Hackathon pitch (14 slides)
-│   └── day2.md                   # Day 2 development log
+│   ├── day2.md                   # Day 2 development log
+│   ├── day3.md                   # Day 3 development log
+│   └── day4.md                   # Day 4 development log
 ├── scripts/                      # Utility scripts
 │   └── dev.sh                    # Start local dev environment
 ├── README.md                     # This file
